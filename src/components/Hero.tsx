@@ -10,7 +10,7 @@ export default function Hero() {
   const { t } = useLanguage()
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden")
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
