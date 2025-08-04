@@ -13,19 +13,23 @@ import {
   Edit,
   Trash2,
   TrendingUp,
-  DollarSign
+  FileText,
+  Building
 } from 'lucide-react'
+import { aldeaData } from '@/data/aldeas'
+import { eventsData } from '@/data/events'
+import { toursData } from '@/data/tours'
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [stats, setStats] = useState({
-    totalBookings: 127,
-    totalRevenue: 5420,
-    totalTours: 8,
-    totalAldeas: 4,
-    activeEvents: 3,
-    newBookingsToday: 5
+    totalCommunities: aldeaData.length,
+    activeCommunities: aldeaData.filter(aldea => aldea.status === 'active').length,
+    totalTours: toursData.length,
+    totalEvents: eventsData.length,
+    totalPopulation: aldeaData.reduce((sum, aldea) => sum + (aldea.population || 0), 0),
+    recentUpdates: 3
   })
 
   useEffect(() => {
@@ -48,17 +52,17 @@ export default function AdminDashboard() {
   }
 
   const quickActions = [
-    { title: 'Nuevo Tour', icon: Plus, href: '/admin/tours/new', color: 'bg-blue-500' },
-    { title: 'Nueva Aldea', icon: MapPin, href: '/admin/aldeas/new', color: 'bg-green-500' },
+    { title: 'Nueva Información Turística', icon: Plus, href: '/admin/tours/new', color: 'bg-blue-500' },
+    { title: 'Nueva Comunidad', icon: MapPin, href: '/admin/aldeas/new', color: 'bg-green-500' },
     { title: 'Nuevo Evento', icon: Calendar, href: '/admin/events/new', color: 'bg-purple-500' },
-    { title: 'Ver Reservas', icon: Eye, href: '/admin/bookings', color: 'bg-orange-500' }
+    { title: 'Ver Contenido', icon: Eye, href: '/admin/content', color: 'bg-orange-500' }
   ]
 
-  const recentBookings = [
-    { id: 1, tour: 'Experiencia Completa', customer: 'María González', date: '2024-01-15', amount: 85 },
-    { id: 2, tour: 'Aldeas Auténticas', customer: 'Carlos López', date: '2024-01-14', amount: 65 },
-    { id: 3, tour: 'Aventura en Volcanes', customer: 'Ana Martínez', date: '2024-01-14', amount: 95 },
-    { id: 4, tour: 'Tour Gastronómico', customer: 'Luis Rodríguez', date: '2024-01-13', amount: 45 }
+  const recentUpdates = [
+    { id: 1, type: 'Comunidad', item: 'San Juan del Obispo', action: 'Actualizada', date: '2024-08-04' },
+    { id: 2, type: 'Evento', item: 'Festival del Chocolate', action: 'Programado', date: '2024-08-03' },
+    { id: 3, type: 'Información', item: 'Paseos con Encanto', action: 'Modificada', date: '2024-08-02' },
+    { id: 4, type: 'Comunidad', item: 'Santa Ana', action: 'Creada', date: '2024-08-01' }
   ]
 
   return (
@@ -86,62 +90,60 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Reservas Totales</p>
-                <p className="text-3xl font-bold text-gray-900">{stats.totalBookings}</p>
+                <p className="text-sm font-medium text-gray-600">Comunidades Totales</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.totalCommunities}</p>
               </div>
               <div className="bg-blue-100 p-3 rounded-full">
-                <Users className="w-6 h-6 text-blue-600" />
+                <MapPin className="w-6 h-6 text-blue-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center text-sm">
-              <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-              <span className="text-green-600">+12% vs mes anterior</span>
+              <span className="text-gray-600">{stats.activeCommunities} activas</span>
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Ingresos</p>
-                <p className="text-3xl font-bold text-gray-900">${stats.totalRevenue}</p>
+                <p className="text-sm font-medium text-gray-600">Población Total</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.totalPopulation.toLocaleString()}</p>
               </div>
               <div className="bg-green-100 p-3 rounded-full">
-                <DollarSign className="w-6 h-6 text-green-600" />
+                <Users className="w-6 h-6 text-green-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center text-sm">
-              <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-              <span className="text-green-600">+8% vs mes anterior</span>
+              <span className="text-gray-600">habitantes registrados</span>
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Tours Activos</p>
+                <p className="text-sm font-medium text-gray-600">Información Turística</p>
                 <p className="text-3xl font-bold text-gray-900">{stats.totalTours}</p>
               </div>
               <div className="bg-purple-100 p-3 rounded-full">
-                <MapPin className="w-6 h-6 text-purple-600" />
+                <FileText className="w-6 h-6 text-purple-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center text-sm">
-              <span className="text-gray-600">{stats.totalAldeas} aldeas disponibles</span>
+              <span className="text-gray-600">sitios de interés</span>
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Eventos Activos</p>
-                <p className="text-3xl font-bold text-gray-900">{stats.activeEvents}</p>
+                <p className="text-sm font-medium text-gray-600">Eventos Municipales</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.totalEvents}</p>
               </div>
               <div className="bg-orange-100 p-3 rounded-full">
                 <Calendar className="w-6 h-6 text-orange-600" />
               </div>
             </div>
             <div className="mt-4 flex items-center text-sm">
-              <span className="text-gray-600">{stats.newBookingsToday} reservas hoy</span>
+              <span className="text-gray-600">programados</span>
             </div>
           </div>
         </div>
@@ -169,27 +171,29 @@ export default function AdminDashboard() {
 
         {/* Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Recent Bookings */}
+          {/* Recent Updates */}
           <div className="bg-white rounded-xl shadow-sm">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">Reservas Recientes</h2>
-                <button className="text-yellow-600 hover:text-yellow-700 font-medium">
+                <h2 className="text-xl font-bold text-gray-900">Actualizaciones Recientes</h2>
+                <button className="text-blue-600 hover:text-blue-700 font-medium">
                   Ver todas
                 </button>
               </div>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {recentBookings.map((booking) => (
-                  <div key={booking.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                {recentUpdates.map((update) => (
+                  <div key={update.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div>
-                      <h3 className="font-semibold text-gray-900">{booking.tour}</h3>
-                      <p className="text-sm text-gray-600">{booking.customer}</p>
-                      <p className="text-xs text-gray-500">{booking.date}</p>
+                      <h3 className="font-semibold text-gray-900">{update.item}</h3>
+                      <p className="text-sm text-gray-600">{update.type} - {update.action}</p>
+                      <p className="text-xs text-gray-500">{update.date}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-green-600">${booking.amount}</p>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {update.type}
+                      </span>
                       <div className="flex space-x-2 mt-2">
                         <button className="p-1 text-gray-400 hover:text-blue-600">
                           <Eye className="w-4 h-4" />
@@ -205,35 +209,35 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* System Status */}
+          {/* Portal Status */}
           <div className="bg-white rounded-xl shadow-sm">
             <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">Estado del Sistema</h2>
+              <h2 className="text-xl font-bold text-gray-900">Estado del Portal</h2>
             </div>
             <div className="p-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Base de Datos</span>
+                  <span className="text-gray-700">Portal Web</span>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    ● Operativo
+                    ● Activo
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Pagos (Stripe)</span>
+                  <span className="text-gray-700">Contenido Municipal</span>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    ● Operativo
+                    ● Actualizado
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Email Service</span>
+                  <span className="text-gray-700">Información Turística</span>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    ● Operativo
+                    ● Disponible
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Backup Automático</span>
+                  <span className="text-gray-700">Última Sincronización</span>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    ● Último: hace 2h
+                    ● Hace 1h
                   </span>
                 </div>
               </div>

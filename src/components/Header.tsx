@@ -22,43 +22,24 @@ export default function Header() {
     <header className="absolute top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between py-3 lg:py-4">
-          {/* Logo */}
+          {/* Official Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="bg-yellow-500 p-1.5 lg:p-2 rounded-lg">
-                <MapPin className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
-              </div>
+            <Link href="/" className="flex items-center space-x-3">
+              <img
+                src="https://portal.muniantigua.gob.gt/_nuxt/img/LOGO_Muni_Blanco.3d5b488.png"
+                alt="Municipalidad de La Antigua Guatemala"
+                className="h-8 lg:h-10"
+              />
               <div className="text-white">
-                <div className="font-bold text-base lg:text-lg">Turismo Antigua</div>
-                <div className="text-xs opacity-80 hidden sm:block">Discover Guatemala</div>
+                <div className="font-bold text-sm lg:text-base">Portal Oficial de Turismo</div>
+                <div className="text-xs opacity-80 hidden sm:block">La Antigua Guatemala</div>
               </div>
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-white/90 hover:text-white font-medium transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Right Side - Language Switcher & CTA */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Right Side - Language Switcher & Menu */}
+          <div className="flex items-center space-x-4">
             <LanguageSwitcher />
-            <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 lg:px-6 py-2 rounded-lg font-semibold transition-colors text-sm lg:text-base">
-              {t('bookNow')}
-            </button>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center space-x-2">
-            <LanguageSwitcher className="scale-90" />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
@@ -69,12 +50,12 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Hamburger Menu */}
       {isMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-black/95 backdrop-blur-sm">
+        <div className="fixed inset-0 z-40 bg-black/95 backdrop-blur-sm">
           <div className="flex flex-col h-full">
             <div className="flex items-center justify-between p-4 border-b border-white/20">
-              <div className="text-white font-bold text-lg">Menu</div>
+              <div className="text-white font-bold text-lg">Menú</div>
               <button
                 onClick={() => setIsMenuOpen(false)}
                 className="text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
@@ -87,7 +68,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block text-white text-xl font-medium py-3 border-b border-white/10 transition-colors"
+                  className="block text-white text-xl font-medium py-3 border-b border-white/10 transition-colors hover:text-yellow-400"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
@@ -95,12 +76,9 @@ export default function Header() {
               ))}
             </div>
             <div className="p-4 border-t border-white/20">
-              <button 
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-4 rounded-lg font-semibold transition-colors text-lg"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('bookNow')}
-              </button>
+              <div className="text-center text-white/80 text-sm">
+                Portal Oficial de Información
+              </div>
             </div>
           </div>
         </div>

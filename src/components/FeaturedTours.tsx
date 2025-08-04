@@ -2,42 +2,10 @@
 
 import { Clock, Users, Star } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { toursData } from '@/data/tours'
 
-const featuredTours = [
-  {
-    id: 1,
-    title: 'Experiencia Completa de Antigua',
-    description: 'Tour integral que combina historia, cultura y gastronomía en un día inolvidable',
-    image: 'https://images.unsplash.com/photo-1518638150340-f706e86654de?q=80&w=2940&auto=format&fit=crop',
-    price: 85,
-    duration: '8 horas',
-    maxGuests: 12,
-    rating: 4.9,
-    highlights: ['Arco de Santa Catalina', 'Convento de las Capuchinas', 'Mercado de Artesanías', 'Degustación de café']
-  },
-  {
-    id: 2,
-    title: 'Aldeas Auténticas',
-    description: 'Visita aldeas tradicionales y conoce de cerca la vida rural guatemalteca',
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=2940&auto=format&fit=crop',
-    price: 65,
-    duration: '6 horas',
-    maxGuests: 8,
-    rating: 4.8,
-    highlights: ['San Antonio Aguas Calientes', 'Talleres textiles', 'Almuerzo tradicional', 'Ceremonia maya']
-  },
-  {
-    id: 3,
-    title: 'Aventura en Volcanes',
-    description: 'Senderismo y vistas espectaculares en los volcanes que rodean Antigua',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2940&auto=format&fit=crop',
-    price: 95,
-    duration: '10 horas',
-    maxGuests: 6,
-    rating: 4.7,
-    highlights: ['Volcán Pacaya', 'Asado de marshmallows', 'Vista de lava', 'Guía especializado']
-  }
-]
+// Get the first 3 tours for featured section
+const featuredTours = toursData.slice(0, 3)
 
 export default function FeaturedTours() {
   const { t } = useLanguage()
@@ -69,15 +37,18 @@ export default function FeaturedTours() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                   
-                  {/* Price Badge */}
-                  <div className="absolute top-6 right-6 bg-yellow-500 text-white px-4 py-2 rounded-full font-bold text-lg shadow-lg">
-                    ${tour.price}
+                  {/* Category Badge */}
+                  <div className="absolute top-6 right-6 bg-yellow-500 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg">
+                    {tour.category === 'cultural' ? 'Cultural' : 
+                     tour.category === 'adventure' ? 'Aventura' :
+                     tour.category === 'gastronomic' ? 'Gastronómico' :
+                     tour.category === 'artisan' ? 'Artesanal' : 'Naturaleza'}
                   </div>
                   
-                  {/* Rating */}
+                  {/* Duration */}
                   <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-full flex items-center space-x-1">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold text-gray-900">{tour.rating}</span>
+                    <Clock className="w-4 h-4 text-gray-700" />
+                    <span className="font-semibold text-gray-900 text-sm">{tour.duration}</span>
                   </div>
                 </div>
                 

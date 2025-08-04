@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Search, MapPin, Clock, Star } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { toursData } from '@/data/tours'
 
 const getCategoriesWithTranslation = (t: any) => [
   { id: 'all', name: t('all'), icon: '🌟' },
@@ -13,52 +14,18 @@ const getCategoriesWithTranslation = (t: any) => [
   { id: 'nature', name: t('nature'), icon: '🌿' }
 ]
 
-const experiences = [
-  {
-    id: 1,
-    title: 'Taller de Textiles en San Antonio',
-    category: 'artisan',
-    location: 'San Antonio Aguas Calientes',
-    duration: '4 horas',
-    rating: 4.9,
-    price: 35,
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=2940&auto=format&fit=crop',
-    description: 'Aprende técnicas ancestrales de tejido con maestras artesanas'
-  },
-  {
-    id: 2,
-    title: 'Caminata al Volcán de Agua',
-    category: 'adventure',
-    location: 'Santa María de Jesús',
-    duration: '8 horas',
-    rating: 4.8,
-    price: 65,
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2940&auto=format&fit=crop',
-    description: 'Ascenso guiado con vistas espectaculares de Antigua'
-  },
-  {
-    id: 3,
-    title: 'Tour Gastronómico Colonial',
-    category: 'gastronomic',
-    location: 'Antigua Guatemala',
-    duration: '3 horas',
-    rating: 4.7,
-    price: 45,
-    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=2940&auto=format&fit=crop',
-    description: 'Sabores auténticos en mercados y restaurantes locales'
-  },
-  {
-    id: 4,
-    title: 'Historia Viva en Ciudad Vieja',
-    category: 'cultural',
-    location: 'Ciudad Vieja',
-    duration: '5 horas',
-    rating: 4.6,
-    price: 40,
-    image: 'https://images.unsplash.com/photo-1518638150340-f706e86654de?q=80&w=2940&auto=format&fit=crop',
-    description: 'Descubre la primera capital de Guatemala'
-  }
-]
+// Convert tours data to experiences format for compatibility
+const experiences = toursData.map(tour => ({
+  id: tour.id,
+  title: tour.title,
+  category: tour.category,
+  location: tour.location,
+  duration: tour.duration,
+  difficulty: tour.difficulty,
+  seasonality: tour.seasonality,
+  image: tour.image,
+  description: tour.description
+}))
 
 export default function ExperienceFinder() {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -129,8 +96,11 @@ export default function ExperienceFinder() {
                   alt={experience.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-xs sm:text-sm font-semibold text-yellow-600">
-                  ${experience.price}
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-xs sm:text-sm font-semibold text-gray-700">
+                  {experience.category === 'cultural' ? '🏛️' : 
+                   experience.category === 'adventure' ? '🥾' :
+                   experience.category === 'gastronomic' ? '🍽️' :
+                   experience.category === 'artisan' ? '🎨' : '🌿'}
                 </div>
               </div>
               
@@ -140,9 +110,10 @@ export default function ExperienceFinder() {
                     <span className="mr-1">{categories.find(c => c.id === experience.category)?.icon}</span>
                     <span className="hidden sm:inline">{categories.find(c => c.id === experience.category)?.name}</span>
                   </span>
-                  <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-medium text-gray-700">{experience.rating}</span>
+                  <div className="flex items-center space-x-1 text-sm text-gray-600">
+                    {experience.difficulty === 'easy' ? 'Fácil' :
+                     experience.difficulty === 'moderate' ? 'Moderado' : 
+                     experience.difficulty === 'difficult' ? 'Difícil' : ''}
                   </div>
                 </div>
                 

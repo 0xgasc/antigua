@@ -1,3 +1,5 @@
+'use client'
+
 import { MapPin, Camera, Heart } from 'lucide-react'
 
 const aldeas = [

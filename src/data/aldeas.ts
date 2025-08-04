@@ -1,19 +1,44 @@
 export interface Aldea {
   id: number
   name: string
+  nameEn?: string
   slug: string
   shortDesc: string
+  shortDescEn?: string
   description: string
+  descriptionEn?: string
   images: string[]
   location: {
     lat: number
     lng: number
     distance: string
+    distanceEn?: string
+    municipality: string
+    municipalityEn?: string
+    department: string
+    departmentEn?: string
+    elevation?: string
   }
   highlights: string[]
-  rating: number
-  tours: number
+  highlightsEn?: string[]
+  population?: number
+  foundedYear?: number
   status: 'active' | 'draft'
+  category: 'cultural' | 'artisan' | 'nature' | 'agricultural' | 'historical'
+  mainActivities: string[]
+  mainActivitiesEn?: string[]
+  culturalSignificance: string
+  culturalSignificanceEn?: string
+  infrastructure: {
+    hasSchool: boolean
+    hasHealthCenter: boolean
+    hasElectricity: boolean
+    hasWater: boolean
+    roadAccess: 'paved' | 'unpaved' | 'trail'
+  }
+  languages: string[]
+  economicActivities: string[]
+  economicActivitiesEn?: string[]
   createdAt: string
   updatedAt: string
 }
@@ -21,116 +46,679 @@ export interface Aldea {
 export const aldeaData: Aldea[] = [
   {
     id: 1,
-    name: 'San Antonio Aguas Calientes',
-    slug: 'san-antonio-aguas-calientes',
-    shortDesc: 'Famosa por sus textiles tradicionales y aguas termales naturales',
-    description: 'San Antonio Aguas Calientes es una aldea conocida mundialmente por sus hermosos textiles tradicionales tejidos a mano por las mujeres de la comunidad. Sus aguas termales naturales ofrecen un lugar perfecto para relajarse después de un día explorando los talleres artesanales.',
-    images: ['https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=800&auto=format&fit=crop'],
-    location: { 
-      lat: 14.5556, 
-      lng: -90.7489,
-      distance: '8 km de Antigua'
-    },
-    highlights: ['Textiles tradicionales', 'Aguas termales', 'Talleres artesanales', 'Gastronomía local'],
-    rating: 4.8,
-    tours: 5,
-    status: 'active',
-    createdAt: '2024-01-15',
-    updatedAt: '2024-01-20'
-  },
-  {
-    id: 2,
-    name: 'Santa María de Jesús',
-    slug: 'santa-maria-de-jesus',
-    shortDesc: 'Puerta de entrada al Volcán de Agua con vistas espectaculares',
-    description: 'Ubicada en las faldas del Volcán de Agua, esta aldea es el punto de partida perfecto para ascensos y caminatas. La comunidad se dedica principalmente al cultivo de café y verduras, ofreciendo una vista auténtica de la vida rural guatemalteca.',
-    images: ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&auto=format&fit=crop'],
-    location: { 
-      lat: 14.5167, 
-      lng: -90.7333,
-      distance: '12 km de Antigua'
-    },
-    highlights: ['Base del Volcán de Agua', 'Cultivos de café', 'Vista panorámica', 'Senderismo'],
-    rating: 4.6,
-    tours: 3,
-    status: 'active',
-    createdAt: '2024-01-12',
-    updatedAt: '2024-01-18'
-  },
-  {
-    id: 3,
     name: 'San Juan del Obispo',
+    nameEn: 'San Juan del Obispo',
     slug: 'san-juan-del-obispo',
-    shortDesc: 'Aldea histórica con el primer palacio episcopal de América',
-    description: 'Rica en historia colonial, alberga el primer palacio episcopal construido en América. Sus calles empedradas y arquitectura colonial bien preservada la convierten en un destino perfecto para los amantes de la historia.',
-    images: ['https://images.unsplash.com/photo-1518638150340-f706e86654de?q=80&w=800&auto=format&fit=crop'],
+    shortDesc: 'Pueblo pintoresco declarado por UNESCO, famoso por sus artesanías de níspero, chocolate y madera',
+    shortDescEn: 'UNESCO-declared picturesque village, famous for loquat, chocolate and wooden handicrafts',
+    description: 'Aldea pintoresca de la Antigua Guatemala, ubicada a 4 kilómetros hacia el sur del centro de la ciudad colonial. Cuenta con 3,586 habitantes. Muchos de ellos se dedican a hacer trabajos artesanales con materias primas como el níspero, el chocolate, la madera y otros. Su fundación como aldea data del siglo XVI, y se fundó con el nombre de San Juan Bautista de Guatemala. Un siglo después cambia su nombre a San Juan del Obispo, en honor al primer obispo de Guatemala, Francisco Marroquín, quien vivió allí.',
+    descriptionEn: 'Picturesque village of Antigua Guatemala, located 4 kilometers south of the colonial city center. It has 3,586 inhabitants. Many of them are dedicated to making handicrafts with raw materials such as loquat, chocolate, wood and others. Its foundation as a village dates from the 16th century, and it was founded with the name of San Juan Bautista de Guatemala. A century later it changed its name to San Juan del Obispo, in honor of the first bishop of Guatemala, Francisco Marroquín, who lived there.',
+    images: [
+      'https://devnet.irys.xyz/85PcSP7bsr3mAP8219M7bNuQQc4K46cj34cYPEYk7WG5'
+    ],
     location: { 
       lat: 14.5447, 
       lng: -90.7342,
-      distance: '6 km de Antigua'
+      distance: '4 km al sur de Antigua',
+      distanceEn: '4 km south of Antigua',
+      municipality: 'Antigua Guatemala',
+      municipalityEn: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      departmentEn: 'Sacatepéquez',
+      elevation: '1,550 msnm'
     },
-    highlights: ['Palacio Episcopal', 'Arquitectura colonial', 'Iglesia histórica', 'Museo local'],
-    rating: 4.7,
-    tours: 4,
+    highlights: [
+      'Pueblo Pintoresco UNESCO',
+      'Artesanías de níspero y chocolate',
+      'Festival del Níspero (Nov 8-9)',
+      'Festival del Chocolate (Ago 10)',
+      'Festival del Pepián (1er fin de semana Jun)',
+      'Programa Paseos con Encanto'
+    ],
+    highlightsEn: [
+      'UNESCO Picturesque Village',
+      'Loquat and chocolate handicrafts',
+      'Loquat Festival (Nov 8-9)',
+      'Chocolate Festival (Aug 10)',
+      'Pepián Festival (1st weekend Jun)',
+      'Charming Walks Program'
+    ],
+    population: 3586,
+    foundedYear: 1524,
     status: 'active',
-    createdAt: '2024-01-10',
-    updatedAt: '2024-01-16'
+    category: 'artisan',
+    mainActivities: [
+      'Artesanías de níspero (licores, vinagres, mermeladas)',
+      'Chocolate artesanal',
+      'Ebanistería y productos de madera',
+      'Trabajos en plata y hierro forjado',
+      'Productos de cuero y miel'
+    ],
+    mainActivitiesEn: [
+      'Loquat crafts (liqueurs, vinegars, jams)',
+      'Artisanal chocolate',
+      'Cabinetmaking and wood products',
+      'Silver and wrought iron work',
+      'Leather products and honey'
+    ],
+    culturalSignificance: 'Pueblo declarado "Pueblo Pintoresco" por la UNESCO. Fundado en el siglo XVI como San Juan Bautista de Guatemala, cambió su nombre en honor al primer obispo de Guatemala, Francisco Marroquín. Centro de tradiciones artesanales reconocido a nivel nacional.',
+    culturalSignificanceEn: 'Village declared "Picturesque Village" by UNESCO. Founded in the 16th century as San Juan Bautista de Guatemala, it changed its name in honor of Guatemala\'s first bishop, Francisco Marroquín. Center of artisanal traditions recognized at the national level.',
+    infrastructure: {
+      hasSchool: true,
+      hasHealthCenter: true,
+      hasElectricity: true,
+      hasWater: true,
+      roadAccess: 'paved'
+    },
+    languages: ['Español', 'Kaqchikel'],
+    economicActivities: [
+      'Artesanías de níspero',
+      'Chocolate artesanal',
+      'Ebanistería y carpintería',
+      'Turismo cultural',
+      'Agricultura familiar'
+    ],
+    economicActivitiesEn: [
+      'Loquat handicrafts',
+      'Artisanal chocolate',
+      'Cabinetmaking and carpentry',
+      'Cultural tourism',
+      'Family farming'
+    ],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 2,
+    name: 'Santa Ana',
+    slug: 'santa-ana',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 3,
+    name: 'El Hato',
+    slug: 'el-hato',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
   },
   {
     id: 4,
-    name: 'Ciudad Vieja',
-    slug: 'ciudad-vieja',
-    shortDesc: 'Primera capital de Guatemala con ruinas de gran valor histórico',
-    description: 'La primera capital del reino de Guatemala, fundada en 1527. Aunque fue destruida por una avalancha en 1541, conserva importantes ruinas históricas y es un sitio fundamental para entender la historia colonial de Guatemala.',
-    images: ['https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop'],
+    name: 'Guardiania El Hato',
+    slug: 'guardiania-el-hato',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
     location: { 
-      lat: 14.5167, 
-      lng: -90.7667,
-      distance: '10 km de Antigua'
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
     },
-    highlights: ['Primera capital', 'Ruinas históricas', 'Museo arqueológico', 'Sitio patrimonial'],
-    rating: 4.5,
-    tours: 2,
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
     status: 'active',
-    createdAt: '2024-01-08',
-    updatedAt: '2024-01-14'
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
   },
   {
     id: 5,
-    name: 'Santa Catarina Barahona',
-    slug: 'santa-catarina-barahona',
-    shortDesc: 'Comunidad agrícola con tradiciones mayas vivas',
-    description: 'Una pequeña comunidad que mantiene vivas las tradiciones mayas ancestrales. Sus habitantes se dedican principalmente a la agricultura y conservan ceremonias y costumbres que han pasado de generación en generación.',
-    images: ['https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop'],
+    name: 'Guayabal',
+    slug: 'guayabal',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
     location: { 
-      lat: 14.5234, 
-      lng: -90.7123,
-      distance: '15 km de Antigua'
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
     },
-    highlights: ['Tradiciones mayas', 'Agricultura orgánica', 'Ceremonias ancestrales', 'Productos locales'],
-    rating: 4.4,
-    tours: 2,
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
     status: 'active',
-    createdAt: '2024-01-05',
-    updatedAt: '2024-01-12'
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
   },
   {
     id: 6,
-    name: 'San Miguel Dueñas',
-    slug: 'san-miguel-duenas',
-    shortDesc: 'Aldea cafetalera con paisajes montañosos impresionantes',
-    description: 'Rodeada de plantaciones de café y montañas, San Miguel Dueñas ofrece algunos de los mejores cafés de la región. Los visitantes pueden aprender sobre el proceso completo del café, desde la siembra hasta la taza.',
-    images: ['https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=800&auto=format&fit=crop'],
+    name: 'San Bartolo',
+    slug: 'san-bartolo',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
     location: { 
-      lat: 14.4923, 
-      lng: -90.7456,
-      distance: '20 km de Antigua'
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
     },
-    highlights: ['Plantaciones de café', 'Proceso del café', 'Paisajes montañosos', 'Degustaciones'],
-    rating: 4.6,
-    tours: 3,
-    status: 'draft',
-    createdAt: '2024-01-03',
-    updatedAt: '2024-01-10'
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 7,
+    name: 'San Cristobal el Bajo',
+    slug: 'san-cristobal-el-bajo',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 8,
+    name: 'San Cristobal el Alto',
+    slug: 'san-cristobal-el-alto',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 9,
+    name: 'San Felipe',
+    slug: 'san-felipe',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 10,
+    name: 'San Gaspar Vivar',
+    slug: 'san-gaspar-vivar',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 11,
+    name: 'San Juan Gascón',
+    slug: 'san-juan-gascon',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 12,
+    name: 'San Lázaro',
+    slug: 'san-lazaro',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [
+      'https://images.unsplash.com/photo-1602120012884-6aa678fa79c7?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1617679139957-a2a988781f25?q=80&w=800&auto=format&fit=crop'
+    ],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 13,
+    name: 'San Mateo Milpas Altas',
+    slug: 'san-mateo-milpas-altas',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [
+      'https://plus.unsplash.com/premium_photo-1687879693677-d04e793214a3?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1590778197285-06a014f2226a?q=80&w=800&auto=format&fit=crop'
+    ],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 14,
+    name: 'San Pedro',
+    slug: 'san-pedro',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 15,
+    name: 'Santa Catarina Bobadilla',
+    slug: 'santa-catarina-bobadilla',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [
+      'https://plus.unsplash.com/premium_photo-1726721290778-6b6a364d834d?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1589783500222-4529ddfd87d1?q=80&w=800&auto=format&fit=crop'
+    ],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 16,
+    name: 'Santa Inés',
+    slug: 'santa-ines',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [
+      'https://images.unsplash.com/photo-1635697298927-0784975caa66?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1529456559600-c3e56a82b3e1?q=80&w=800&auto=format&fit=crop'
+    ],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 17,
+    name: 'San Pedro las Huertas',
+    slug: 'san-pedro-las-huertas',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [
+      'https://plus.unsplash.com/premium_photo-1730145749990-e0a854daea1c?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1604251086259-8f3bf6000a18?q=80&w=800&auto=format&fit=crop'
+    ],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
+  },
+  {
+    id: 18,
+    name: 'San Bartolome Becerra',
+    slug: 'san-bartolome-becerra',
+    shortDesc: 'Pendiente',
+    description: 'Pendiente',
+    images: [],
+    location: { 
+      lat: 0, 
+      lng: 0,
+      distance: 'Pendiente',
+      municipality: 'Antigua Guatemala',
+      department: 'Sacatepéquez',
+      elevation: 'Pendiente'
+    },
+    highlights: ['Pendiente', 'Pendiente', 'Pendiente'],
+    population: 0,
+    foundedYear: 0,
+    status: 'active',
+    category: 'cultural',
+    mainActivities: ['Pendiente'],
+    culturalSignificance: 'Pendiente',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved'
+    },
+    languages: ['Español'],
+    economicActivities: ['Pendiente'],
+    createdAt: '2024-08-04',
+    updatedAt: '2024-08-04'
   }
 ]

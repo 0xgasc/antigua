@@ -1,0 +1,4 @@
+# Please add the Antigua municipal building image here as:
+# antigua-municipal-building.jpg
+
+# For now, using a placeholder from Unsplash that shows a colonial building
