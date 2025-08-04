@@ -1,4 +1,7 @@
-import { Clock, Users, Star, MapPin } from 'lucide-react'
+'use client'
+
+import { Clock, Users, Star } from 'lucide-react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 const featuredTours = [
   {
@@ -37,16 +40,17 @@ const featuredTours = [
 ]
 
 export default function FeaturedTours() {
+  const { t } = useLanguage()
+  
   return (
     <section className="py-16 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Tours Destacados
+            {t('featuredToursTitle')}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Experiencias cuidadosamente diseñadas para mostrarte lo mejor de Antigua 
-            y sus alrededores con guías locales expertos
+            {t('featuredToursSubtitle')}
           </p>
         </div>
 
@@ -100,7 +104,7 @@ export default function FeaturedTours() {
                   
                   {/* Highlights */}
                   <div className="mb-6">
-                    <h4 className="font-semibold text-gray-900 mb-3">Incluye:</h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">{t('includes')}</h4>
                     <div className="grid grid-cols-1 gap-2">
                       {tour.highlights.map((highlight, idx) => (
                         <div key={idx} className="flex items-center text-sm text-gray-600">
@@ -112,7 +116,7 @@ export default function FeaturedTours() {
                   </div>
                   
                   <button className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl">
-                    Reservar Ahora
+                    {t('reserveNow')}
                   </button>
                 </div>
               </div>
@@ -122,7 +126,7 @@ export default function FeaturedTours() {
         
         <div className="text-center mt-12">
           <button className="inline-flex items-center px-8 py-4 border-2 border-yellow-500 text-yellow-600 font-semibold rounded-xl hover:bg-yellow-500 hover:text-white transition-colors duration-200">
-            Ver Todos los Tours
+            {t('viewAllTours')}
             <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>

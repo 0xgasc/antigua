@@ -1,15 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, Filter, MapPin, Clock, Star } from 'lucide-react'
+import { Search, MapPin, Clock, Star } from 'lucide-react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
-const categories = [
-  { id: 'all', name: 'Todas', icon: '🌟' },
-  { id: 'cultural', name: 'Cultural', icon: '🏛️' },
-  { id: 'adventure', name: 'Aventura', icon: '🥾' },
-  { id: 'gastronomic', name: 'Gastronómico', icon: '🍽️' },
-  { id: 'artisan', name: 'Artesanal', icon: '🎨' },
-  { id: 'nature', name: 'Naturaleza', icon: '🌿' }
+const getCategoriesWithTranslation = (t: any) => [
+  { id: 'all', name: t('all'), icon: '🌟' },
+  { id: 'cultural', name: t('cultural'), icon: '🏛️' },
+  { id: 'adventure', name: t('adventure'), icon: '🥾' },
+  { id: 'gastronomic', name: t('gastronomic'), icon: '🍽️' },
+  { id: 'artisan', name: t('artisan'), icon: '🎨' },
+  { id: 'nature', name: t('nature'), icon: '🌿' }
 ]
 
 const experiences = [
@@ -62,6 +63,9 @@ const experiences = [
 export default function ExperienceFinder() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const { t } = useLanguage()
+  
+  const categories = getCategoriesWithTranslation(t)
 
   const filteredExperiences = experiences.filter(exp => {
     const matchesCategory = selectedCategory === 'all' || exp.category === selectedCategory
@@ -75,11 +79,10 @@ export default function ExperienceFinder() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Encuentra tu Experiencia Perfecta
+            {t('experienceFinderTitle')}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Desde talleres artesanales hasta aventuras en la naturaleza, 
-            descubre experiencias auténticas en cada aldea
+            {t('experienceFinderSubtitle')}
           </p>
         </div>
 
@@ -90,7 +93,7 @@ export default function ExperienceFinder() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Buscar experiencias..."
+              placeholder={t('searchExperiences')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
@@ -158,7 +161,7 @@ export default function ExperienceFinder() {
                 </div>
                 
                 <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 sm:py-3 px-4 rounded-lg transition-colors duration-200 text-sm sm:text-base">
-                  Reservar Ahora
+                  {t('reserveNow')}
                 </button>
               </div>
             </div>
