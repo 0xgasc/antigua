@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+  role     Role   @default(ADMIN)
+  name     String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Aldea {
+  id          String @id @default(cuid())
+  name        String
+  slug        String @unique
+  description String
+  shortDesc   String
+  images      String[]
+  location    Json
+  highlights  String[]
+  
+  tours Tour[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tour {
+  id          String @id @default(cuid())
+  title       String
+  slug        String @unique
+  description String
+  shortDesc   String
+  images      String[]
+  price       Float
+  duration    Int // in hours
+  maxCapacity Int
+  difficulty  Difficulty
+  category    TourCategory
+  highlights  String[]
+  included    String[]
+  notIncluded String[]
+  
+  aldeaId String?
+  aldea   Aldea?  @relation(fields: [aldeaId], references: [id])
+  
+  bookings Booking[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id           String        @id @default(cuid())
+  tourId       String
+  tour         Tour          @relation(fields: [tourId], references: [id])
+  
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  participants    Int
+  selectedDate    DateTime
+  totalPrice      Float
+  status          BookingStatus @default(PENDING)
+  
+  paymentId    String?
+  paymentStatus PaymentStatus @default(PENDING)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id          String @id @default(cuid())
+  title       String
+  slug        String @unique
+  description String
+  shortDesc   String
+  image       String?
+  startDate   DateTime
+  endDate     DateTime?
+  location    String
+  category    EventCategory
+  isFeatured  Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum Difficulty {
+  EASY
+  MODERATE
+  CHALLENGING
+}
+
+enum TourCategory {
+  CULTURAL
+  ADVENTURE
+  NATURE
+  HISTORICAL
+  GASTRONOMIC
+  RELIGIOUS
+}
+
+enum EventCategory {
+  FESTIVAL
+  CULTURAL
+  RELIGIOUS
+  SEASONAL
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
