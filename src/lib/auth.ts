@@ -14,12 +14,12 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        // Temporary hardcoded admin credentials
-        if (credentials.email === 'admin@turismoantigua.com' && credentials.password === 'admin123') {
+        // Municipal admin credentials
+        if (credentials.email === 'admin@muniantigua.gob.gt' && credentials.password === 'admin123') {
           return {
             id: '1',
-            email: 'admin@turismoantigua.com',
-            name: 'Administrator',
+            email: 'admin@muniantigua.gob.gt',
+            name: 'Administrador Municipal',
             role: 'ADMIN'
           }
         }

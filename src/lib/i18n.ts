@@ -18,7 +18,7 @@ export const translations = {
     // Main Actions
     discoverEvents: 'Eventos Municipales',
     exploreCulture: 'Información Cultural',
-    charmingWalks: 'Conoce las Comunidades',
+    charmingWalks: 'Paseos con Encanto',
     
     // Experience Finder
     experienceFinderTitle: 'Información Turística Municipal',
