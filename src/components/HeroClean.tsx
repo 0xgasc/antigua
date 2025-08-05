@@ -63,7 +63,7 @@ export default function HeroClean() {
                 href="/aldeas"
                 className="inline-block bg-white/20 hover:bg-white/30 border border-white/40 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200"
               >
-                Conocer Comunidades
+                Paseos con Encanto
               </Link>
               <Link
                 href="/eventos"

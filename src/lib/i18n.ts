@@ -3,7 +3,7 @@ export const translations = {
     // Navigation
     home: 'Inicio',
     tours: 'Tours',
-    villages: 'Comunidades',
+    villages: 'Paseos con Encanto',
     events: 'Eventos',
     contact: 'Contacto',
     bookNow: 'Más Información',

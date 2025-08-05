@@ -16,7 +16,7 @@ export default function AldeasPage() {
       
       {/* Professional Banner */}
       <ProfessionalBanner 
-        title="Comunidades Locales"
+        title="Paseos con Encanto"
         subtitle="Aldeas de La Antigua Guatemala"
         description="Información oficial sobre las comunidades rurales y aldeas que forman parte del municipio de La Antigua Guatemala"
         height="medium"
