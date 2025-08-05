@@ -17,11 +17,13 @@ export default function ProfessionalBanner({
 }: ProfessionalBannerProps) {
   const [currentImage, setCurrentImage] = useState(0)
   
-  // Same Antigua Guatemala municipal building images
+  // Antigua Guatemala images rotation
   const images = [
     'https://devnet.irys.xyz/YkhhURLKbtaDfBymQL6gpy5nbizU2fBxEudScgtn3to',
     'https://devnet.irys.xyz/2DTgbJaJRcRpjA2gxHNqVgV5PRh4TthwMk28RhzpLak1',
-    'https://devnet.irys.xyz/6PkTtXPmDdzQPwPc1ZzghFCr8cbYP1FRFqg8W7PPT8hr'
+    'https://devnet.irys.xyz/6PkTtXPmDdzQPwPc1ZzghFCr8cbYP1FRFqg8W7PPT8hr',
+    'https://www.turismoantigua.com/wp-content/uploads/2024/10/arco-antigua-guatemala-turismo-scaled.jpg',
+    'https://www.turismoantigua.com/wp-content/uploads/2024/10/festivales-noviembre-1-edited-scaled.jpg'
   ]
   
   useEffect(() => {
