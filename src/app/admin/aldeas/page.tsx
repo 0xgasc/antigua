@@ -1,20 +1,53 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, MapPin, Eye, Search } from 'lucide-react'
 import Link from 'next/link'
 
-import { aldeaData } from '@/data/aldeas'
+import { type Aldea } from '@/data/aldeas'
 
 export default function AldeasPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
+  const [aldeas, setAldeas] = useState<Aldea[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const filteredAldeas = aldeaData.filter(aldea => {
+  useEffect(() => {
+    fetchAldeas()
+  }, [])
+
+  const fetchAldeas = async () => {
+    try {
+      const response = await fetch('/api/aldeas')
+      if (response.ok) {
+        const data = await response.json()
+        setAldeas(data)
+      } else {
+        console.error('Failed to fetch aldeas')
+      }
+    } catch (error) {
+      console.error('Error fetching aldeas:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filteredAldeas = aldeas.filter(aldea => {
     const matchesSearch = aldea.name.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesStatus = filterStatus === 'all' || aldea.status === filterStatus
     return matchesSearch && matchesStatus
   })
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando aldeas...</p>
+        </div>
+      </div>
+    )
+  }
 
   const handleDelete = (id: number) => {
     if (confirm('¿Estás seguro de que quieres eliminar esta aldea?')) {
@@ -81,7 +114,7 @@ export default function AldeasPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Aldeas</p>
-                <p className="text-2xl font-bold text-gray-900">{aldeaData.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{aldeas.length}</p>
               </div>
             </div>
           </div>
@@ -93,7 +126,7 @@ export default function AldeasPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Activas</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {aldeaData.filter(a => a.status === 'active').length}
+                  {aldeas.filter(a => a.status === 'active').length}
                 </p>
               </div>
             </div>
@@ -106,7 +139,7 @@ export default function AldeasPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Borradores</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {aldeaData.filter(a => a.status === 'draft').length}
+                  {aldeas.filter(a => a.status === 'draft').length}
                 </p>
               </div>
             </div>
@@ -142,11 +175,17 @@ export default function AldeasPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-12 w-12">
-                          <img
-                            className="h-12 w-12 rounded-lg object-cover"
-                            src={aldea.images[0]}
-                            alt={aldea.name}
-                          />
+                          {aldea.images && aldea.images.length > 0 ? (
+                            <img
+                              className="h-12 w-12 rounded-lg object-cover"
+                              src={aldea.images[0]}
+                              alt={aldea.name}
+                            />
+                          ) : (
+                            <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                              <MapPin className="w-6 h-6 text-gray-400" />
+                            </div>
+                          )}
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">{aldea.name}</div>
@@ -163,7 +202,7 @@ export default function AldeasPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{aldea.tours} tours</div>
+                      <div className="text-sm text-gray-900">{(aldea as any).tours || 0} tours</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
