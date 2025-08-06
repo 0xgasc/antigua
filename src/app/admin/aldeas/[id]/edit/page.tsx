@@ -21,25 +21,29 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
     description: '',
     images: [''],
     location: {
-      coordinates: { lat: 0, lng: 0 },
+      lat: 0,
+      lng: 0,
       distance: '',
-      duration: ''
+      municipality: '',
+      department: '',
+      elevation: ''
     },
     highlights: [''],
-    tours: 0,
-    rating: 0,
+    population: 0,
+    foundedYear: 0,
     status: 'draft' as 'active' | 'draft',
-    price: 0,
-    category: '',
-    bestTimeToVisit: '',
-    activities: [''],
-    facilities: [''],
-    accessibility: '',
-    contactInfo: {
-      phone: '',
-      email: '',
-      website: ''
-    }
+    category: 'cultural' as 'cultural' | 'artisan' | 'nature' | 'agricultural' | 'historical',
+    mainActivities: [''],
+    culturalSignificance: '',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved' as 'paved' | 'unpaved' | 'trail'
+    },
+    languages: ['Español'],
+    economicActivities: ['']
   })
 
   useEffect(() => {
@@ -49,22 +53,25 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
         slug: existingAldea.slug,
         shortDesc: existingAldea.shortDesc,
         description: existingAldea.description || '',
-        images: existingAldea.images,
-        location: existingAldea.location,
-        highlights: existingAldea.highlights,
-        tours: existingAldea.tours,
-        rating: existingAldea.rating,
+        images: existingAldea.images || [''],
+        location: {
+          lat: existingAldea.location.lat,
+          lng: existingAldea.location.lng,
+          distance: existingAldea.location.distance,
+          municipality: existingAldea.location.municipality,
+          department: existingAldea.location.department,
+          elevation: existingAldea.location.elevation || ''
+        },
+        highlights: existingAldea.highlights || [''],
+        population: existingAldea.population || 0,
+        foundedYear: existingAldea.foundedYear || 0,
         status: existingAldea.status,
-        category: '',
-        bestTimeToVisit: '',
-        activities: [''],
-        facilities: [''],
-        accessibility: '',
-        contactInfo: {
-          phone: '',
-          email: '',
-          website: ''
-        }
+        category: existingAldea.category,
+        mainActivities: existingAldea.mainActivities || [''],
+        culturalSignificance: existingAldea.culturalSignificance || '',
+        infrastructure: existingAldea.infrastructure,
+        languages: existingAldea.languages || ['Español'],
+        economicActivities: existingAldea.economicActivities || ['']
       })
     }
   }, [existingAldea])
@@ -114,15 +121,25 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
     setIsLoading(true)
     
     try {
-      // TODO: Implement actual save functionality
-      console.log('Saving aldea:', formData)
+      const response = await fetch(`/api/aldeas/${aldeaId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      })
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      if (!response.ok) {
+        throw new Error('Failed to save aldea')
+      }
+      
+      const updatedAldea = await response.json()
+      console.log('Aldea saved successfully:', updatedAldea)
       
       router.push('/admin/aldeas')
     } catch (error) {
       console.error('Error saving aldea:', error)
+      alert('Error al guardar la aldea. Por favor, intente de nuevo.')
     } finally {
       setIsLoading(false)
     }
@@ -223,8 +240,8 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   <option value="cultural">Cultural</option>
                   <option value="artisan">Artesanal</option>
                   <option value="nature">Naturaleza</option>
-                  <option value="adventure">Aventura</option>
-                  <option value="gastronomic">Gastronómico</option>
+                  <option value="agricultural">Agrícola</option>
+                  <option value="historical">Histórico</option>
                 </select>
               </div>
               
@@ -310,11 +327,39 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
             </button>
           </div>
 
-          {/* Location & Pricing */}
+          {/* Location */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Ubicación y Precios</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Ubicación</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Latitud
+                </label>
+                <input
+                  type="number"
+                  step="0.000001"
+                  value={formData.location.lat}
+                  onChange={(e) => handleNestedInputChange('location', 'lat', parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Longitud
+                </label>
+                <input
+                  type="number"
+                  step="0.000001"
+                  value={formData.location.lng}
+                  onChange={(e) => handleNestedInputChange('location', 'lng', parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <MapPin className="w-4 h-4 inline mr-1" />
@@ -331,18 +376,42 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Clock className="w-4 h-4 inline mr-1" />
-                  Duración del viaje
+                  Elevación
                 </label>
                 <input
                   type="text"
-                  value={formData.location.duration}
-                  onChange={(e) => handleNestedInputChange('location', 'duration', e.target.value)}
-                  placeholder="ej: 30 minutos"
+                  value={formData.location.elevation}
+                  onChange={(e) => handleNestedInputChange('location', 'elevation', e.target.value)}
+                  placeholder="ej: 1,550 msnm"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
               
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Municipio
+                </label>
+                <input
+                  type="text"
+                  value={formData.location.municipality}
+                  onChange={(e) => handleNestedInputChange('location', 'municipality', e.target.value)}
+                  placeholder="ej: Antigua Guatemala"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Departamento
+                </label>
+                <input
+                  type="text"
+                  value={formData.location.department}
+                  onChange={(e) => handleNestedInputChange('location', 'department', e.target.value)}
+                  placeholder="ej: Sacatepéquez"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                />
+              </div>
             </div>
           </div>
 
@@ -381,23 +450,23 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
             </button>
           </div>
 
-          {/* Activities */}
+          {/* Main Activities */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Actividades</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Actividades Principales</h2>
             
-            {formData.activities.map((activity, index) => (
+            {formData.mainActivities.map((activity, index) => (
               <div key={index} className="flex items-center space-x-3 mb-3">
                 <input
                   type="text"
                   value={activity}
-                  onChange={(e) => handleArrayInputChange('activities', index, e.target.value)}
-                  placeholder="Actividad disponible"
+                  onChange={(e) => handleArrayInputChange('mainActivities', index, e.target.value)}
+                  placeholder="Actividad principal"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
-                {formData.activities.length > 1 && (
+                {formData.mainActivities.length > 1 && (
                   <button
                     type="button"
-                    onClick={() => removeArrayItem('activities', index)}
+                    onClick={() => removeArrayItem('mainActivities', index)}
                     className="text-red-600 hover:text-red-700"
                   >
                     <X className="w-4 h-4" />
@@ -408,7 +477,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
             
             <button
               type="button"
-              onClick={() => addArrayItem('activities')}
+              onClick={() => addArrayItem('mainActivities')}
               className="flex items-center space-x-2 text-yellow-600 hover:text-yellow-700"
             >
               <Plus className="w-4 h-4" />
@@ -416,39 +485,142 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
             </button>
           </div>
 
-          {/* Additional Info */}
+          {/* Cultural and Economic Info */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Información Adicional</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Información Cultural y Económica</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Mejor época para visitar
+                  Población
                 </label>
                 <input
-                  type="text"
-                  value={formData.bestTimeToVisit}
-                  onChange={(e) => handleInputChange('bestTimeToVisit', e.target.value)}
-                  placeholder="ej: Todo el año, Noviembre - Abril"
+                  type="number"
+                  value={formData.population}
+                  onChange={(e) => handleInputChange('population', parseInt(e.target.value) || 0)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Accesibilidad
+                  Año de Fundación
                 </label>
-                <select
-                  value={formData.accessibility}
-                  onChange={(e) => handleInputChange('accessibility', e.target.value)}
+                <input
+                  type="number"
+                  value={formData.foundedYear}
+                  onChange={(e) => handleInputChange('foundedYear', parseInt(e.target.value) || 0)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                >
-                  <option value="">Seleccionar nivel</option>
-                  <option value="easy">Fácil acceso</option>
-                  <option value="moderate">Acceso moderado</option>
-                  <option value="difficult">Acceso difícil</option>
-                </select>
+                />
               </div>
+            </div>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Significado Cultural
+              </label>
+              <textarea
+                value={formData.culturalSignificance}
+                onChange={(e) => handleInputChange('culturalSignificance', e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                placeholder="Importancia cultural e histórica de la aldea..."
+              />
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-3">Actividades Económicas</h3>
+              {formData.economicActivities.map((activity, index) => (
+                <div key={index} className="flex items-center space-x-3 mb-3">
+                  <input
+                    type="text"
+                    value={activity}
+                    onChange={(e) => handleArrayInputChange('economicActivities', index, e.target.value)}
+                    placeholder="Actividad económica"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  />
+                  {formData.economicActivities.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeArrayItem('economicActivities', index)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+              
+              <button
+                type="button"
+                onClick={() => addArrayItem('economicActivities')}
+                className="flex items-center space-x-2 text-yellow-600 hover:text-yellow-700"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Agregar actividad económica</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Infrastructure */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Infraestructura</h2>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.infrastructure.hasSchool}
+                  onChange={(e) => handleNestedInputChange('infrastructure', 'hasSchool', e.target.checked)}
+                  className="rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                />
+                <span className="text-sm text-gray-700">Escuela</span>
+              </label>
+              
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.infrastructure.hasHealthCenter}
+                  onChange={(e) => handleNestedInputChange('infrastructure', 'hasHealthCenter', e.target.checked)}
+                  className="rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                />
+                <span className="text-sm text-gray-700">Centro de Salud</span>
+              </label>
+              
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.infrastructure.hasElectricity}
+                  onChange={(e) => handleNestedInputChange('infrastructure', 'hasElectricity', e.target.checked)}
+                  className="rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                />
+                <span className="text-sm text-gray-700">Electricidad</span>
+              </label>
+              
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.infrastructure.hasWater}
+                  onChange={(e) => handleNestedInputChange('infrastructure', 'hasWater', e.target.checked)}
+                  className="rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                />
+                <span className="text-sm text-gray-700">Agua Potable</span>
+              </label>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Acceso por Carretera
+              </label>
+              <select
+                value={formData.infrastructure.roadAccess}
+                onChange={(e) => handleNestedInputChange('infrastructure', 'roadAccess', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+              >
+                <option value="paved">Pavimentada</option>
+                <option value="unpaved">Sin pavimentar</option>
+                <option value="trail">Sendero</option>
+              </select>
             </div>
           </div>
         </form>

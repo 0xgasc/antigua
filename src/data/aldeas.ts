@@ -1,3 +1,5 @@
+import aldeasJson from './aldeas.json'
+
 export interface Aldea {
   id: number
   name: string
@@ -43,7 +45,10 @@ export interface Aldea {
   updatedAt: string
 }
 
-export const aldeaData: Aldea[] = [
+export const aldeaData: Aldea[] = aldeasJson as Aldea[]
+
+// Keep the original data structure for backward compatibility
+const originalData: Aldea[] = [
   {
     id: 1,
     name: 'San Juan del Obispo',
