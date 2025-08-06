@@ -19,14 +19,36 @@ export async function POST(request: NextRequest) {
     
     console.log(`📁 Received file: ${file.name} (${file.size} bytes)`)
     
+    // Check environment variables
+    const privateKey = process.env.PRIVATE_KEY
+    const sepoliaRpc = process.env.SEPOLIA_RPC
+    
+    console.log('🔍 Environment check:')
+    console.log(`  - PRIVATE_KEY exists: ${!!privateKey}`)
+    console.log(`  - SEPOLIA_RPC exists: ${!!sepoliaRpc}`)
+    
+    if (!privateKey) {
+      return NextResponse.json(
+        { error: 'PRIVATE_KEY environment variable not configured' },
+        { status: 500 }
+      )
+    }
+    
+    if (!sepoliaRpc) {
+      return NextResponse.json(
+        { error: 'SEPOLIA_RPC environment variable not configured' },
+        { status: 500 }
+      )
+    }
+    
     // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
     
     // Initialize Irys uploader
     const irysUploader = await Uploader(Ethereum)
-      .withWallet(process.env.PRIVATE_KEY!)
-      .withRpc(process.env.SEPOLIA_RPC!)
+      .withWallet(privateKey)
+      .withRpc(sepoliaRpc)
       .devnet()
     
     // Check balance and price
