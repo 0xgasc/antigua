@@ -19,14 +19,30 @@ model User {
 }
 
 model Aldea {
-  id          String @id @default(cuid())
-  name        String
-  slug        String @unique
-  description String
-  shortDesc   String
-  images      String[]
-  location    Json
-  highlights  String[]
+  id                      Int      @id @default(autoincrement())
+  name                    String
+  nameEn                  String?
+  slug                    String   @unique
+  shortDesc               String
+  shortDescEn             String?
+  description             String   @db.Text
+  descriptionEn           String?  @db.Text
+  images                  String[]
+  location                Json     // Contains lat, lng, distance, municipality, department, elevation
+  highlights              String[]
+  highlightsEn            String[]
+  population              Int?
+  foundedYear             Int?
+  status                  AldeaStatus @default(ACTIVE)
+  category                AldeaCategory
+  mainActivities          String[]
+  mainActivitiesEn        String[]
+  culturalSignificance    String   @db.Text
+  culturalSignificanceEn  String?  @db.Text
+  infrastructure          Json     // Contains hasSchool, hasHealthCenter, hasElectricity, hasWater, roadAccess
+  languages               String[]
+  economicActivities      String[]
+  economicActivitiesEn    String[]
   
   tours Tour[]
   
@@ -50,7 +66,7 @@ model Tour {
   included    String[]
   notIncluded String[]
   
-  aldeaId String?
+  aldeaId Int?
   aldea   Aldea?  @relation(fields: [aldeaId], references: [id])
   
   bookings Booking[]
@@ -135,4 +151,17 @@ enum PaymentStatus {
   COMPLETED
   FAILED
   REFUNDED
+}
+
+enum AldeaStatus {
+  ACTIVE
+  DRAFT
+}
+
+enum AldeaCategory {
+  CULTURAL
+  ARTISAN
+  NATURE
+  AGRICULTURAL
+  HISTORICAL
 }

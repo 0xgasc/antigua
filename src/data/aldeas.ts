@@ -1,4 +1,4 @@
-import aldeasJson from './aldeas.json'
+import { PrismaClient } from '@prisma/client'
 
 export interface Aldea {
   id: number
@@ -45,9 +45,50 @@ export interface Aldea {
   updatedAt: string
 }
 
-export const aldeaData: Aldea[] = aldeasJson as Aldea[]
+const prisma = new PrismaClient()
 
-// Keep the original data structure for backward compatibility
+function mapStatusFromEnum(status: string) {
+  return status === 'ACTIVE' ? 'active' : 'draft'
+}
+
+function mapCategoryFromEnum(category: string) {
+  return category.toLowerCase() as 'cultural' | 'artisan' | 'nature' | 'agricultural' | 'historical'
+}
+
+// Function to get aldea data from database
+export async function getAldeaData(): Promise<Aldea[]> {
+  try {
+    const aldeas = await prisma.aldea.findMany({
+      orderBy: { id: 'asc' }
+    })
+    
+    return aldeas.map(aldea => ({
+      ...aldea,
+      status: mapStatusFromEnum(aldea.status),
+      category: mapCategoryFromEnum(aldea.category),
+      createdAt: aldea.createdAt.toISOString().split('T')[0],
+      updatedAt: aldea.updatedAt.toISOString().split('T')[0]
+    }))
+  } catch (error) {
+    console.error('Error fetching aldea data:', error)
+    return []
+  }
+}
+
+// For backward compatibility - use static data as fallback
+export let aldeaData: Aldea[] = []
+
+// Load data on module initialization (for server-side rendering)
+if (typeof window === 'undefined') {
+  getAldeaData().then(data => {
+    aldeaData = data
+  }).catch(error => {
+    console.error('Failed to load aldea data:', error)
+    aldeaData = []
+  })
+}
+
+// Keep the original data structure for complete backward compatibility
 const originalData: Aldea[] = [
   {
     id: 1,
