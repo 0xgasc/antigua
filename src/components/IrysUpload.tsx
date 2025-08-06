@@ -4,11 +4,12 @@ import { useState } from 'react'
 import { Upload, X, Check, Loader2 } from 'lucide-react'
 
 interface IrysUploadProps {
-  onUploadComplete: (url: string) => void
+  onUpload?: (url: string) => void
+  onUploadComplete?: (url: string) => void
   onClose?: () => void
 }
 
-export default function IrysUpload({ onUploadComplete, onClose }: IrysUploadProps) {
+export default function IrysUpload({ onUpload, onUploadComplete, onClose }: IrysUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
   const [file, setFile] = useState<File | null>(null)
@@ -31,38 +32,39 @@ export default function IrysUpload({ onUploadComplete, onClose }: IrysUploadProp
 
     setUploading(true)
     try {
-      // For now, use a free image hosting service as a fallback
-      // You can replace this with actual Irys implementation when you have the API key
+      console.log('📤 Uploading to Irys via API route...')
       
-      // Using imgbb as an example (free tier available)
       const formData = new FormData()
-      formData.append('image', file)
+      formData.append('file', file)
       
-      // You'll need to get a free API key from imgbb.com
-      const IMGBB_API_KEY = '6d207e02198a847aa98d0a2a901485a5' // Free test key (replace with your own)
-      
-      const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+      const response = await fetch('/api/upload/irys', {
         method: 'POST',
         body: formData
       })
 
       if (!response.ok) {
-        throw new Error('Upload failed')
+        const errorData = await response.json()
+        throw new Error(errorData.details || errorData.error || 'Upload failed')
       }
 
       const result = await response.json()
-      const imageUrl = result.data.url
+      const imageUrl = result.url
+      
+      console.log('✅ Upload successful:', imageUrl)
       
       setUploadedUrl(imageUrl)
-      onUploadComplete(imageUrl)
+      if (onUpload) onUpload(imageUrl)
+      if (onUploadComplete) onUploadComplete(imageUrl)
       
       // Auto close after successful upload
       setTimeout(() => {
         if (onClose) onClose()
       }, 2000)
     } catch (error) {
-      console.error('Error uploading image:', error)
-      // Fallback to URL mode if upload fails
+      console.error('Error uploading to Irys:', error)
+      
+      // Show error message but allow fallback to URL mode
+      alert(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}. You can use URL mode instead.`)
       setUseUrlMode(true)
     } finally {
       setUploading(false)
@@ -75,7 +77,8 @@ export default function IrysUpload({ onUploadComplete, onClose }: IrysUploadProp
 
   const handleUrlSubmit = () => {
     if (urlInput) {
-      onUploadComplete(urlInput)
+      if (onUpload) onUpload(urlInput)
+      if (onUploadComplete) onUploadComplete(urlInput)
       if (onClose) onClose()
     }
   }
