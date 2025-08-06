@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Save, Upload, X, Plus, MapPin, Clock, DollarSign } from 'lucide-react'
+import { ArrowLeft, Save, Upload, X, Plus, MapPin, Clock, DollarSign, Camera } from 'lucide-react'
 import Link from 'next/link'
-import { aldeaData, type Aldea } from '@/data/aldeas'
+import { type Aldea } from '@/data/aldeas'
+import IrysUpload from '@/components/IrysUpload'
 
 export default function EditAldeaPage({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -12,6 +13,8 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(false)
   const [existingAldea, setExistingAldea] = useState<Aldea | null>(null)
   const [pageLoading, setPageLoading] = useState(true)
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [uploadTargetIndex, setUploadTargetIndex] = useState<number | null>(null)
   
   const [formData, setFormData] = useState({
     name: '',
@@ -131,6 +134,14 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
     }))
   }
 
+  const handleImageUpload = (url: string) => {
+    if (uploadTargetIndex !== null) {
+      handleArrayInputChange('images', uploadTargetIndex, url)
+    }
+    setShowUploadModal(false)
+    setUploadTargetIndex(null)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -236,7 +247,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -249,7 +260,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   type="text"
                   value={formData.slug}
                   onChange={(e) => handleInputChange('slug', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
               
@@ -260,7 +271,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                 <select
                   value={formData.category}
                   onChange={(e) => handleInputChange('category', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 >
                   <option value="">Seleccionar categoría</option>
                   <option value="cultural">Cultural</option>
@@ -278,7 +289,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                 <select
                   value={formData.status}
                   onChange={(e) => handleInputChange('status', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 >
                   <option value="draft">Borrador</option>
                   <option value="active">Activo</option>
@@ -294,7 +305,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                 value={formData.shortDesc}
                 onChange={(e) => handleInputChange('shortDesc', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 required
               />
             </div>
@@ -307,7 +318,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 rows={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 placeholder="Descripción detallada de la aldea..."
               />
             </div>
@@ -319,14 +330,25 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
             
             {formData.images.map((image, index) => (
               <div key={index} className="flex items-center space-x-3 mb-4">
-                <div className="flex-1">
+                <div className="flex-1 flex space-x-2">
                   <input
                     type="url"
                     value={image}
                     onChange={(e) => handleArrayInputChange('images', index, e.target.value)}
                     placeholder="URL de la imagen"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                   />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUploadTargetIndex(index)
+                      setShowUploadModal(true)
+                    }}
+                    className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    title="Subir imagen"
+                  >
+                    <Camera className="w-5 h-5" />
+                  </button>
                 </div>
                 {image && (
                   <img src={image} alt="" className="w-16 h-16 object-cover rounded-lg" />
@@ -367,7 +389,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   step="0.000001"
                   value={formData.location.lat}
                   onChange={(e) => handleNestedInputChange('location', 'lat', parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
               
@@ -380,7 +402,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   step="0.000001"
                   value={formData.location.lng}
                   onChange={(e) => handleNestedInputChange('location', 'lng', parseFloat(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -396,7 +418,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   value={formData.location.distance}
                   onChange={(e) => handleNestedInputChange('location', 'distance', e.target.value)}
                   placeholder="ej: 15 km de Antigua"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
               
@@ -409,7 +431,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   value={formData.location.elevation}
                   onChange={(e) => handleNestedInputChange('location', 'elevation', e.target.value)}
                   placeholder="ej: 1,550 msnm"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
               
@@ -422,7 +444,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   value={formData.location.municipality}
                   onChange={(e) => handleNestedInputChange('location', 'municipality', e.target.value)}
                   placeholder="ej: Antigua Guatemala"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
               
@@ -435,7 +457,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   value={formData.location.department}
                   onChange={(e) => handleNestedInputChange('location', 'department', e.target.value)}
                   placeholder="ej: Sacatepéquez"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -452,7 +474,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   value={highlight}
                   onChange={(e) => handleArrayInputChange('highlights', index, e.target.value)}
                   placeholder="Punto destacado"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
                 {formData.highlights.length > 1 && (
                   <button
@@ -487,7 +509,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   value={activity}
                   onChange={(e) => handleArrayInputChange('mainActivities', index, e.target.value)}
                   placeholder="Actividad principal"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
                 {formData.mainActivities.length > 1 && (
                   <button
@@ -524,7 +546,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   type="number"
                   value={formData.population}
                   onChange={(e) => handleInputChange('population', parseInt(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
               
@@ -536,7 +558,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                   type="number"
                   value={formData.foundedYear}
                   onChange={(e) => handleInputChange('foundedYear', parseInt(e.target.value) || 0)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -549,7 +571,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                 value={formData.culturalSignificance}
                 onChange={(e) => handleInputChange('culturalSignificance', e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 placeholder="Importancia cultural e histórica de la aldea..."
               />
             </div>
@@ -563,7 +585,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
                     value={activity}
                     onChange={(e) => handleArrayInputChange('economicActivities', index, e.target.value)}
                     placeholder="Actividad económica"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                   />
                   {formData.economicActivities.length > 1 && (
                     <button
@@ -641,7 +663,7 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
               <select
                 value={formData.infrastructure.roadAccess}
                 onChange={(e) => handleNestedInputChange('infrastructure', 'roadAccess', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               >
                 <option value="paved">Pavimentada</option>
                 <option value="unpaved">Sin pavimentar</option>
@@ -651,6 +673,17 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
           </div>
         </form>
       </div>
+      
+      {/* Upload Modal */}
+      {showUploadModal && (
+        <IrysUpload
+          onUploadComplete={handleImageUpload}
+          onClose={() => {
+            setShowUploadModal(false)
+            setUploadTargetIndex(null)
+          }}
+        />
+      )}
     </div>
   )
 }
