@@ -23,8 +23,6 @@ const navigation = [
   { name: 'Tours', href: '/admin/tours', icon: MapPin },
   { name: 'Aldeas', href: '/admin/aldeas', icon: Image },
   { name: 'Eventos', href: '/admin/events', icon: Calendar },
-  { name: 'Reservas', href: '/admin/bookings', icon: Users },
-  { name: 'Pagos', href: '/admin/payments', icon: CreditCard },
   { name: 'Reportes', href: '/admin/reports', icon: BarChart3 },
   { name: 'Contenido', href: '/admin/content', icon: FileText },
   { name: 'Configuración', href: '/admin/settings', icon: Settings },

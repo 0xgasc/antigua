@@ -1,15 +1,58 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProfessionalBanner from '@/components/ProfessionalBanner'
 import Link from 'next/link'
 import { MapPin, Camera, Star } from 'lucide-react'
-import { aldeaData } from '@/data/aldeas'
-
-const aldeas = aldeaData.filter(aldea => aldea.status === 'active')
+import { type Aldea } from '@/data/aldeas'
 
 export default function AldeasPage() {
+  const [aldeas, setAldeas] = useState<Aldea[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchAldeas()
+  }, [])
+
+  const fetchAldeas = async () => {
+    try {
+      const response = await fetch('/api/aldeas')
+      if (response.ok) {
+        const data = await response.json()
+        // Filter only active aldeas
+        setAldeas(data.filter((aldea: Aldea) => aldea.status === 'active'))
+      } else {
+        console.error('Failed to fetch aldeas')
+      }
+    } catch (error) {
+      console.error('Error fetching aldeas:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <main className="min-h-screen">
+        <Header />
+        <ProfessionalBanner 
+          title="Paseos con Encanto"
+          subtitle="Aldeas de La Antigua Guatemala"
+          description="Información oficial sobre las comunidades rurales y aldeas que forman parte del municipio de La Antigua Guatemala"
+          height="medium"
+        />
+        <div className="py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-96">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Cargando aldeas...</p>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    )
+  }
   return (
     <main className="min-h-screen">
       <Header />
@@ -46,10 +89,13 @@ export default function AldeasPage() {
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                     
-                    {/* Rating */}
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center space-x-1">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold text-gray-900 text-sm">{aldea.rating}</span>
+                    {/* Status badge */}
+                    <div className="absolute top-4 left-4 bg-green-600/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      {aldea.category === 'artisan' ? 'Artesanal' : 
+                       aldea.category === 'cultural' ? 'Cultural' :
+                       aldea.category === 'nature' ? 'Naturaleza' :
+                       aldea.category === 'historical' ? 'Histórico' :
+                       aldea.category === 'agricultural' ? 'Agrícola' : 'Cultural'}
                     </div>
                     
                     {/* Municipal info badge */}

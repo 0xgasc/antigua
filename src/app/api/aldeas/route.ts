@@ -13,9 +13,17 @@ function mapCategoryFromEnum(category: string) {
 
 export async function GET() {
   try {
+    console.log('Fetching aldeas from database...')
+    
+    // First test the connection
+    await prisma.$connect()
+    console.log('Database connected successfully')
+    
     const aldeas = await prisma.aldea.findMany({
       orderBy: { id: 'asc' }
     })
+    
+    console.log(`Found ${aldeas.length} aldeas`)
     
     const responseData = aldeas.map(aldea => ({
       ...aldea,
@@ -30,8 +38,10 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching aldeas:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch aldeas' },
+      { error: 'Failed to fetch aldeas', details: error.message },
       { status: 500 }
     )
+  } finally {
+    await prisma.$disconnect()
   }
 }
