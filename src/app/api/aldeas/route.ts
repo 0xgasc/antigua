@@ -136,6 +136,7 @@ export async function POST(request: NextRequest) {
         languages: requestData.languages || ['Español'],
         economicActivities: requestData.economicActivities || [],
         economicActivitiesEn: requestData.economicActivitiesEn || [],
+        seturInfo: requestData.seturInfo,
       }
     })
     

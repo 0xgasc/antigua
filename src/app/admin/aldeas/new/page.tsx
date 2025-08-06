@@ -41,7 +41,8 @@ export default function NewAldeaPage() {
       roadAccess: 'unpaved' as 'paved' | 'unpaved' | 'trail'
     },
     languages: ['Español'],
-    economicActivities: ['']
+    economicActivities: [''],
+    seturInfo: ''
   })
 
   const handleInputChange = (field: string, value: any) => {
@@ -278,6 +279,19 @@ export default function NewAldeaPage() {
                 rows={6}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 placeholder="Descripción detallada de la aldea, su historia, cultura y atractivos..."
+              />
+            </div>
+            
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                DIRECCIÓN DE ECONOMÍA Y TURISMO - MUNICIPALIDAD DE LA ANTIGUA GUATEMALA
+              </label>
+              <textarea
+                value={formData.seturInfo}
+                onChange={(e) => handleInputChange('seturInfo', e.target.value)}
+                rows={8}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
+                placeholder="Información sobre programas y servicios de SETUR..."
               />
             </div>
           </div>

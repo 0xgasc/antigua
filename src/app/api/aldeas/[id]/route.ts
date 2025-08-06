@@ -61,6 +61,7 @@ export async function PUT(
         languages: updatedData.languages || ['Español'],
         economicActivities: updatedData.economicActivities || [],
         economicActivitiesEn: updatedData.economicActivitiesEn || [],
+        seturInfo: updatedData.seturInfo,
       }
     })
     

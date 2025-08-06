@@ -43,6 +43,7 @@ model Aldea {
   languages               String[]
   economicActivities      String[]
   economicActivitiesEn    String[]
+  seturInfo               String?  @db.Text
   
   tours Tour[]
   
