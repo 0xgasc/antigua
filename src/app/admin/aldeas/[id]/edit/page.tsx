@@ -10,9 +10,8 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const aldeaId = parseInt(params.id)
   const [isLoading, setIsLoading] = useState(false)
-  
-  // Find the aldea to edit
-  const existingAldea = aldeaData.find(a => a.id === aldeaId)
+  const [existingAldea, setExistingAldea] = useState<Aldea | null>(null)
+  const [pageLoading, setPageLoading] = useState(true)
   
   const [formData, setFormData] = useState({
     name: '',
@@ -47,34 +46,50 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
   })
 
   useEffect(() => {
-    if (existingAldea) {
-      setFormData({
-        name: existingAldea.name,
-        slug: existingAldea.slug,
-        shortDesc: existingAldea.shortDesc,
-        description: existingAldea.description || '',
-        images: existingAldea.images || [''],
-        location: {
-          lat: existingAldea.location.lat,
-          lng: existingAldea.location.lng,
-          distance: existingAldea.location.distance,
-          municipality: existingAldea.location.municipality,
-          department: existingAldea.location.department,
-          elevation: existingAldea.location.elevation || ''
-        },
-        highlights: existingAldea.highlights || [''],
-        population: existingAldea.population || 0,
-        foundedYear: existingAldea.foundedYear || 0,
-        status: existingAldea.status,
-        category: existingAldea.category,
-        mainActivities: existingAldea.mainActivities || [''],
-        culturalSignificance: existingAldea.culturalSignificance || '',
-        infrastructure: existingAldea.infrastructure,
-        languages: existingAldea.languages || ['Español'],
-        economicActivities: existingAldea.economicActivities || ['']
-      })
+    fetchAldea()
+  }, [aldeaId])
+
+  const fetchAldea = async () => {
+    try {
+      const response = await fetch(`/api/aldeas/${aldeaId}`)
+      if (response.ok) {
+        const aldea = await response.json()
+        setExistingAldea(aldea)
+        
+        setFormData({
+          name: aldea.name,
+          slug: aldea.slug,
+          shortDesc: aldea.shortDesc,
+          description: aldea.description || '',
+          images: aldea.images || [''],
+          location: {
+            lat: aldea.location.lat,
+            lng: aldea.location.lng,
+            distance: aldea.location.distance,
+            municipality: aldea.location.municipality,
+            department: aldea.location.department,
+            elevation: aldea.location.elevation || ''
+          },
+          highlights: aldea.highlights || [''],
+          population: aldea.population || 0,
+          foundedYear: aldea.foundedYear || 0,
+          status: aldea.status,
+          category: aldea.category,
+          mainActivities: aldea.mainActivities || [''],
+          culturalSignificance: aldea.culturalSignificance || '',
+          infrastructure: aldea.infrastructure,
+          languages: aldea.languages || ['Español'],
+          economicActivities: aldea.economicActivities || ['']
+        })
+      } else {
+        console.error('Failed to fetch aldea')
+      }
+    } catch (error) {
+      console.error('Error fetching aldea:', error)
+    } finally {
+      setPageLoading(false)
     }
-  }, [existingAldea])
+  }
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
@@ -143,6 +158,17 @@ export default function EditAldeaPage({ params }: { params: { id: string } }) {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (pageLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando aldea...</p>
+        </div>
+      </div>
+    )
   }
 
   if (!existingAldea) {

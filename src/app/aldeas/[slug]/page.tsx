@@ -1,21 +1,56 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProfessionalBanner from '@/components/ProfessionalBanner'
 import { MapPin, Users, Calendar, Star, Phone, Mail } from 'lucide-react'
-import { aldeaData } from '@/data/aldeas'
+import { type Aldea } from '@/data/aldeas'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 export default function AldeaDetailPage() {
   const params = useParams()
   const { currentLanguage } = useLanguage()
   const slug = params.slug as string
+  const [aldea, setAldea] = useState<Aldea | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchAldea()
+  }, [slug])
+
+  const fetchAldea = async () => {
+    try {
+      // Fetch all aldeas and find by slug
+      const response = await fetch('/api/aldeas')
+      if (response.ok) {
+        const aldeas = await response.json()
+        const foundAldea = aldeas.find((a: Aldea) => a.slug === slug)
+        setAldea(foundAldea || null)
+      } else {
+        console.error('Failed to fetch aldeas')
+      }
+    } catch (error) {
+      console.error('Error fetching aldea:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
   
-  // Find the aldea by slug
-  const aldea = aldeaData.find(a => a.slug === slug)
-  
+  if (loading) {
+    return (
+      <main className="min-h-screen">
+        <Header />
+        <div className="pt-24 pb-16 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando comunidad...</p>
+        </div>
+        <Footer />
+      </main>
+    )
+  }
+
   if (!aldea) {
     return (
       <main className="min-h-screen">
