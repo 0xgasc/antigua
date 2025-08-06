@@ -114,8 +114,29 @@ export default function AldeaDetailPage() {
                 <p className="text-gray-700 leading-relaxed">{getDescription()}</p>
               </div>
 
+              {/* SETUR Information */}
+              {aldea.seturInfo && (
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="bg-blue-100 p-3 rounded-lg">
+                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900 mb-3">
+                        Dirección de Economía y Turismo - Municipalidad de La Antigua Guatemala
+                      </h3>
+                      <div className="text-gray-700 leading-relaxed whitespace-pre-line">
+                        {aldea.seturInfo}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Cultural Significance */}
-              <div className="bg-blue-50 rounded-xl p-6">
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Importancia Cultural</h3>
                 <p className="text-gray-700 leading-relaxed">{getCulturalSignificance()}</p>
               </div>
@@ -125,9 +146,9 @@ export default function AldeaDetailPage() {
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Actividades Principales</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {getMainActivities().map((activity, index) => (
-                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
+                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
                       <div className="flex items-center">
-                        <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+                        <div className="w-2 h-2 bg-gray-600 rounded-full mr-3"></div>
                         <span className="text-gray-700">{activity}</span>
                       </div>
                     </div>
@@ -140,9 +161,9 @@ export default function AldeaDetailPage() {
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Puntos Destacados</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {getHighlights().map((highlight, index) => (
-                    <div key={index} className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                       <div className="flex items-center">
-                        <Star className="w-4 h-4 text-yellow-600 mr-2" />
+                        <Star className="w-4 h-4 text-gray-600 mr-2" />
                         <span className="text-gray-700 text-sm">{highlight}</span>
                       </div>
                     </div>
@@ -204,7 +225,7 @@ export default function AldeaDetailPage() {
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Idiomas</h3>
                 <div className="flex flex-wrap gap-2">
                   {aldea.languages.map((language, index) => (
-                    <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                    <span key={index} className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
                       {language}
                     </span>
                   ))}
@@ -217,7 +238,7 @@ export default function AldeaDetailPage() {
                 <div className="space-y-2">
                   {getEconomicActivities().map((activity, index) => (
                     <div key={index} className="flex items-center">
-                      <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
+                      <div className="w-2 h-2 bg-gray-600 rounded-full mr-3"></div>
                       <span className="text-gray-700 text-sm">{activity}</span>
                     </div>
                   ))}

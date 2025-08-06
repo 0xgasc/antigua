@@ -71,26 +71,26 @@ export default function AldeasPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {aldeas.map((aldea) => (
               <Link key={aldea.id} href={`/aldeas/${aldea.slug}`} className="group cursor-pointer">
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group-hover:-translate-y-2">
-                  <div className="relative h-64 overflow-hidden">
+                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  <div className="relative h-56 overflow-hidden">
                     {aldea.images.length > 0 ? (
                       <img
                         src={aldea.images[0]}
                         alt={aldea.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                        <div className="text-center text-blue-600">
+                      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                        <div className="text-center text-gray-500">
                           <MapPin className="w-12 h-12 mx-auto mb-2" />
                           <p className="text-sm font-medium">{aldea.name}</p>
                         </div>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     
-                    {/* Status badge */}
-                    <div className="absolute top-4 left-4 bg-green-600/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    {/* Category badge */}
+                    <div className="absolute top-3 left-3 bg-white/90 text-gray-800 px-3 py-1 rounded-full text-xs font-medium">
                       {aldea.category === 'artisan' ? 'Artesanal' : 
                        aldea.category === 'cultural' ? 'Cultural' :
                        aldea.category === 'nature' ? 'Naturaleza' :
@@ -98,25 +98,15 @@ export default function AldeasPage() {
                        aldea.category === 'agricultural' ? 'Agrícola' : 'Cultural'}
                     </div>
                     
-                    {/* Municipal info badge */}
-                    <div className="absolute top-4 right-4 bg-blue-600/90 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                      Información
-                    </div>
-                    
                     {/* Distance badge */}
-                    <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
-                      <MapPin className="inline w-4 h-4 mr-1" />
+                    <div className="absolute bottom-3 left-3 bg-white/90 text-gray-800 px-3 py-1 rounded-full text-xs">
+                      <MapPin className="inline w-3 h-3 mr-1" />
                       {aldea.location.distance}
-                    </div>
-
-                    {/* Community info */}
-                    <div className="absolute bottom-4 right-4 bg-green-600/90 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                      Comunidad
                     </div>
                   </div>
                   
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-gray-700 transition-colors">
                       {aldea.name}
                     </h3>
                     
