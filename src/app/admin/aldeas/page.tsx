@@ -18,15 +18,20 @@ export default function AldeasPage() {
 
   const fetchAldeas = async () => {
     try {
+      console.log('🔍 Fetching aldeas from API...')
       const response = await fetch('/api/aldeas')
+      console.log('📡 Response status:', response.status)
+      
       if (response.ok) {
         const data = await response.json()
+        console.log('✅ Received data:', data.length, 'aldeas')
         setAldeas(data)
       } else {
-        console.error('Failed to fetch aldeas')
+        const errorText = await response.text()
+        console.error('❌ Failed to fetch aldeas:', response.status, errorText)
       }
     } catch (error) {
-      console.error('Error fetching aldeas:', error)
+      console.error('❌ Error fetching aldeas:', error)
     } finally {
       setLoading(false)
     }
