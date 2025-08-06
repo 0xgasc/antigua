@@ -24,8 +24,11 @@ export async function POST(request: NextRequest) {
     const sepoliaRpc = process.env.SEPOLIA_RPC
     
     console.log('🔍 Environment check:')
+    console.log(`  - NODE_ENV: ${process.env.NODE_ENV}`)
     console.log(`  - PRIVATE_KEY exists: ${!!privateKey}`)
+    console.log(`  - PRIVATE_KEY length: ${privateKey?.length || 0}`)
     console.log(`  - SEPOLIA_RPC exists: ${!!sepoliaRpc}`)
+    console.log(`  - Available env vars: ${Object.keys(process.env).filter(k => k.includes('PRIVATE') || k.includes('SEPOLIA') || k.includes('IRYS')).join(', ')}`)
     
     if (!privateKey) {
       return NextResponse.json(
