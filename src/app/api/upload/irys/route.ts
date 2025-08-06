@@ -55,11 +55,11 @@ export async function POST(request: NextRequest) {
     const price = await irysUploader.getPrice(buffer.length)
     const balance = await irysUploader.getBalance()
     
-    console.log(`💰 Balance: ${balance} wei, Cost: ${price} wei`)
+    console.log(`💰 Balance: ${balance.toString()} wei, Cost: ${price.toString()} wei`)
     
-    if (BigInt(balance) < BigInt(price)) {
+    if (BigInt(balance.toString()) < BigInt(price.toString())) {
       return NextResponse.json(
-        { error: `Insufficient balance. Need: ${price} wei, Have: ${balance} wei` },
+        { error: `Insufficient balance. Need: ${price.toString()} wei, Have: ${balance.toString()} wei` },
         { status: 400 }
       )
     }
