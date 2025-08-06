@@ -152,7 +152,7 @@ export default function AldeasPage() {
           </h2>
           <p className="text-xl text-gray-300 mb-8">
             Para más información sobre servicios municipales en estas comunidades, 
-            contacta a la Municipalidad de La Antigua Guatemala.
+            contacta al departamento de turismo municipal.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-colors duration-200">
