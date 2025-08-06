@@ -51,17 +51,27 @@ export default function IrysUpload({ onUpload, onUploadComplete, onClose }: Irys
 
       if (!response.ok) {
         let errorMessage = 'Upload failed'
-        try {
-          const errorData = await response.json()
-          errorMessage = errorData.details || errorData.error || 'Upload failed'
-        } catch {
-          // If response isn't JSON, try to get text error
-          const errorText = await response.text()
-          if (errorText.includes('Request Entity Too Large')) {
-            errorMessage = 'File too large. Please use a smaller image (max 50MB)'
-          } else if (errorText.includes('timeout')) {
-            errorMessage = 'Upload timeout. Please try a smaller file'
-          } else {
+        const contentType = response.headers.get('content-type')
+        
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            const errorData = await response.json()
+            errorMessage = errorData.details || errorData.error || 'Upload failed'
+          } catch {
+            errorMessage = `Server error: ${response.status}`
+          }
+        } else {
+          // If not JSON, try to get text error
+          try {
+            const errorText = await response.text()
+            if (errorText.includes('Request Entity Too Large')) {
+              errorMessage = 'File too large. Please use a smaller image (max 50MB)'
+            } else if (errorText.includes('timeout')) {
+              errorMessage = 'Upload timeout. Please try a smaller file'
+            } else {
+              errorMessage = `Server error: ${response.status}`
+            }
+          } catch {
             errorMessage = `Server error: ${response.status}`
           }
         }
