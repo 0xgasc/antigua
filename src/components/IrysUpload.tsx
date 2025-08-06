@@ -18,6 +18,13 @@ export default function IrysUpload({ onUpload, onUploadComplete, onClose }: Irys
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
     if (selectedFile) {
+      // Check file size (50MB limit)
+      const maxSize = 50 * 1024 * 1024 // 50MB
+      if (selectedFile.size > maxSize) {
+        alert(`File too large. Maximum size is ${maxSize / 1024 / 1024}MB. Your file is ${(selectedFile.size / 1024 / 1024).toFixed(1)}MB.`)
+        return
+      }
+      
       setFile(selectedFile)
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -43,8 +50,22 @@ export default function IrysUpload({ onUpload, onUploadComplete, onClose }: Irys
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.details || errorData.error || 'Upload failed')
+        let errorMessage = 'Upload failed'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.details || errorData.error || 'Upload failed'
+        } catch {
+          // If response isn't JSON, try to get text error
+          const errorText = await response.text()
+          if (errorText.includes('Request Entity Too Large')) {
+            errorMessage = 'File too large. Please use a smaller image (max 50MB)'
+          } else if (errorText.includes('timeout')) {
+            errorMessage = 'Upload timeout. Please try a smaller file'
+          } else {
+            errorMessage = `Server error: ${response.status}`
+          }
+        }
+        throw new Error(errorMessage)
       }
 
       const result = await response.json()
@@ -104,7 +125,7 @@ export default function IrysUpload({ onUpload, onUploadComplete, onClose }: Irys
                 <label className="cursor-pointer flex flex-col items-center">
                   <Upload className="w-12 h-12 text-gray-400 mb-3" />
                   <span className="text-gray-600 mb-2">Click para seleccionar imagen</span>
-                  <span className="text-xs text-gray-500">PNG, JPG, GIF hasta 10MB</span>
+                  <span className="text-xs text-gray-500">PNG, JPG, GIF hasta 50MB</span>
                   <input
                     type="file"
                     accept="image/*"

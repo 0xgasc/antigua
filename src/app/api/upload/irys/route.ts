@@ -19,6 +19,15 @@ export async function POST(request: NextRequest) {
     
     console.log(`📁 Received file: ${file.name} (${file.size} bytes)`)
     
+    // Check file size (limit to 50MB)
+    const maxSize = 50 * 1024 * 1024 // 50MB
+    if (file.size > maxSize) {
+      return NextResponse.json(
+        { error: `File too large. Maximum size is ${maxSize / 1024 / 1024}MB` },
+        { status: 400 }
+      )
+    }
+    
     // Check environment variables
     const privateKey = process.env.PRIVATE_KEY
     const sepoliaRpc = process.env.SEPOLIA_RPC
