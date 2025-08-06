@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -84,6 +84,79 @@ export async function GET() {
     
     console.log('⚠️ Using fallback data')
     return NextResponse.json(fallbackData)
+  } finally {
+    await prisma.$disconnect()
+  }
+}
+
+function mapStatusToEnum(status: string) {
+  return status === 'active' ? 'ACTIVE' : 'DRAFT'
+}
+
+function mapCategoryToEnum(category: string) {
+  const categoryMap: { [key: string]: string } = {
+    'cultural': 'CULTURAL',
+    'artisan': 'ARTISAN', 
+    'nature': 'NATURE',
+    'agricultural': 'AGRICULTURAL',
+    'historical': 'HISTORICAL'
+  }
+  return categoryMap[category] || 'CULTURAL'
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    console.log('=== CREATE ALDEA API CALLED ===')
+    const requestData = await request.json()
+    console.log('Received data:', requestData)
+    
+    // Create the aldea in database
+    const newAldea = await prisma.aldea.create({
+      data: {
+        name: requestData.name,
+        nameEn: requestData.nameEn,
+        slug: requestData.slug,
+        shortDesc: requestData.shortDesc,
+        shortDescEn: requestData.shortDescEn,
+        description: requestData.description || '',
+        descriptionEn: requestData.descriptionEn,
+        images: requestData.images || [],
+        location: requestData.location,
+        highlights: requestData.highlights || [],
+        highlightsEn: requestData.highlightsEn || [],
+        population: requestData.population,
+        foundedYear: requestData.foundedYear,
+        status: requestData.status ? mapStatusToEnum(requestData.status) : 'DRAFT',
+        category: requestData.category ? mapCategoryToEnum(requestData.category) : 'CULTURAL',
+        mainActivities: requestData.mainActivities || [],
+        mainActivitiesEn: requestData.mainActivitiesEn || [],
+        culturalSignificance: requestData.culturalSignificance || '',
+        culturalSignificanceEn: requestData.culturalSignificanceEn,
+        infrastructure: requestData.infrastructure,
+        languages: requestData.languages || ['Español'],
+        economicActivities: requestData.economicActivities || [],
+        economicActivitiesEn: requestData.economicActivitiesEn || [],
+      }
+    })
+    
+    console.log('✅ Created aldea:', newAldea.name)
+    
+    // Convert back to frontend format
+    const responseData = {
+      ...newAldea,
+      status: mapStatusFromEnum(newAldea.status),
+      category: mapCategoryFromEnum(newAldea.category),
+      createdAt: newAldea.createdAt.toISOString().split('T')[0],
+      updatedAt: newAldea.updatedAt.toISOString().split('T')[0]
+    }
+    
+    return NextResponse.json(responseData, { status: 201 })
+  } catch (error) {
+    console.error('❌ Error creating aldea:', error)
+    return NextResponse.json(
+      { error: 'Failed to create aldea', details: error.message },
+      { status: 500 }
+    )
   } finally {
     await prisma.$disconnect()
   }

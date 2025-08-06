@@ -2,12 +2,15 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Save, Plus, X, MapPin, Clock, DollarSign } from 'lucide-react'
+import { ArrowLeft, Save, Plus, X, MapPin, Clock, DollarSign, Camera } from 'lucide-react'
 import Link from 'next/link'
+import IrysUpload from '@/components/IrysUpload'
 
 export default function NewAldeaPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [uploadTargetIndex, setUploadTargetIndex] = useState<number | null>(null)
   
   const [formData, setFormData] = useState({
     name: '',
@@ -16,24 +19,29 @@ export default function NewAldeaPage() {
     description: '',
     images: [''],
     location: {
-      coordinates: { lat: 0, lng: 0 },
+      lat: 0,
+      lng: 0,
       distance: '',
-      duration: ''
+      municipality: '',
+      department: '',
+      elevation: ''
     },
     highlights: [''],
-    tours: 0,
-    rating: 0,
+    population: 0,
+    foundedYear: 0,
     status: 'draft' as 'active' | 'draft',
-    category: '',
-    bestTimeToVisit: '',
-    activities: [''],
-    facilities: [''],
-    accessibility: '',
-    contactInfo: {
-      phone: '',
-      email: '',
-      website: ''
-    }
+    category: 'cultural' as 'cultural' | 'artisan' | 'nature' | 'agricultural' | 'historical',
+    mainActivities: [''],
+    culturalSignificance: '',
+    infrastructure: {
+      hasSchool: false,
+      hasHealthCenter: false,
+      hasElectricity: false,
+      hasWater: false,
+      roadAccess: 'unpaved' as 'paved' | 'unpaved' | 'trail'
+    },
+    languages: ['Español'],
+    economicActivities: ['']
   })
 
   const handleInputChange = (field: string, value: any) => {
@@ -92,28 +100,51 @@ export default function NewAldeaPage() {
     }
   }
 
+  const handleImageUpload = (url: string) => {
+    if (uploadTargetIndex !== null) {
+      handleArrayInputChange('images', uploadTargetIndex, url)
+    }
+    setShowUploadModal(false)
+    setUploadTargetIndex(null)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     
     try {
-      // TODO: Implement actual save functionality
-      const newAldea = {
+      // Clean up the data
+      const cleanFormData = {
         ...formData,
-        id: Date.now(), // Temporary ID generation
         images: formData.images.filter(img => img.trim() !== ''),
         highlights: formData.highlights.filter(h => h.trim() !== ''),
-        activities: formData.activities.filter(a => a.trim() !== '')
+        mainActivities: formData.mainActivities.filter(a => a.trim() !== ''),
+        economicActivities: formData.economicActivities.filter(a => a.trim() !== ''),
+        languages: formData.languages.filter(l => l.trim() !== '')
       }
       
-      console.log('Creating new aldea:', newAldea)
+      console.log('Creating new aldea:', cleanFormData)
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Create via API
+      const response = await fetch('/api/aldeas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cleanFormData)
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to create aldea')
+      }
+      
+      const newAldea = await response.json()
+      console.log('Aldea created successfully:', newAldea)
       
       router.push('/admin/aldeas')
     } catch (error) {
       console.error('Error creating aldea:', error)
+      alert('Error al crear la aldea. Por favor, intente de nuevo.')
     } finally {
       setIsLoading(false)
     }
@@ -171,7 +202,7 @@ export default function NewAldeaPage() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                   placeholder="ej: San Antonio Aguas Calientes"
                   required
                 />
@@ -185,7 +216,7 @@ export default function NewAldeaPage() {
                   type="text"
                   value={formData.slug}
                   onChange={(e) => handleInputChange('slug', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                   placeholder="Se genera automáticamente"
                 />
               </div>
@@ -197,14 +228,14 @@ export default function NewAldeaPage() {
                 <select
                   value={formData.category}
                   onChange={(e) => handleInputChange('category', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 >
                   <option value="">Seleccionar categoría</option>
                   <option value="cultural">Cultural</option>
                   <option value="artisan">Artesanal</option>
                   <option value="nature">Naturaleza</option>
-                  <option value="adventure">Aventura</option>
-                  <option value="gastronomic">Gastronómico</option>
+                  <option value="agricultural">Agrícola</option>
+                  <option value="historical">Histórico</option>
                 </select>
               </div>
               
@@ -215,7 +246,7 @@ export default function NewAldeaPage() {
                 <select
                   value={formData.status}
                   onChange={(e) => handleInputChange('status', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 >
                   <option value="draft">Borrador</option>
                   <option value="active">Activo</option>
@@ -231,7 +262,7 @@ export default function NewAldeaPage() {
                 value={formData.shortDesc}
                 onChange={(e) => handleInputChange('shortDesc', e.target.value)}
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 placeholder="Descripción breve que aparecerá en las tarjetas de vista previa"
                 required
               />
@@ -245,7 +276,7 @@ export default function NewAldeaPage() {
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 rows={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 placeholder="Descripción detallada de la aldea, su historia, cultura y atractivos..."
               />
             </div>
@@ -260,14 +291,25 @@ export default function NewAldeaPage() {
             
             {formData.images.map((image, index) => (
               <div key={index} className="flex items-center space-x-3 mb-4">
-                <div className="flex-1">
+                <div className="flex-1 flex items-center space-x-2">
                   <input
                     type="url"
                     value={image}
                     onChange={(e) => handleArrayInputChange('images', index, e.target.value)}
                     placeholder="https://ejemplo.com/imagen.jpg"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                   />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUploadTargetIndex(index)
+                      setShowUploadModal(true)
+                    }}
+                    className="p-2 text-yellow-600 hover:text-yellow-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                    title="Subir imagen"
+                  >
+                    <Camera className="w-4 h-4" />
+                  </button>
                 </div>
                 {image && (
                   <img src={image} alt="" className="w-16 h-16 object-cover rounded-lg" />
@@ -309,41 +351,63 @@ export default function NewAldeaPage() {
                   value={formData.location.distance}
                   onChange={(e) => handleNestedInputChange('location', 'distance', e.target.value)}
                   placeholder="ej: 15 km"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Clock className="w-4 h-4 inline mr-1" />
-                  Duración del viaje
+                  Municipio
                 </label>
                 <input
                   type="text"
-                  value={formData.location.duration}
-                  onChange={(e) => handleNestedInputChange('location', 'duration', e.target.value)}
-                  placeholder="ej: 30 minutos"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  value={formData.location.municipality}
+                  onChange={(e) => handleNestedInputChange('location', 'municipality', e.target.value)}
+                  placeholder="ej: Antigua Guatemala"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Departamento
+                </label>
+                <input
+                  type="text"
+                  value={formData.location.department}
+                  onChange={(e) => handleNestedInputChange('location', 'department', e.target.value)}
+                  placeholder="Sacatepéquez"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Elevación
+                </label>
+                <input
+                  type="text"
+                  value={formData.location.elevation}
+                  onChange={(e) => handleNestedInputChange('location', 'elevation', e.target.value)}
+                  placeholder="1,530 msnm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
+                />
+              </div>
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Latitud
                 </label>
                 <input
                   type="number"
-                  value={formData.location.coordinates.lat}
-                  onChange={(e) => handleNestedInputChange('location', 'coordinates', {
-                    ...formData.location.coordinates,
-                    lat: parseFloat(e.target.value) || 0
-                  })}
+                  value={formData.location.lat}
+                  onChange={(e) => handleNestedInputChange('location', 'lat', parseFloat(e.target.value) || 0)}
                   step="any"
                   placeholder="14.5592"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               
@@ -353,14 +417,11 @@ export default function NewAldeaPage() {
                 </label>
                 <input
                   type="number"
-                  value={formData.location.coordinates.lng}
-                  onChange={(e) => handleNestedInputChange('location', 'coordinates', {
-                    ...formData.location.coordinates,
-                    lng: parseFloat(e.target.value) || 0
-                  })}
+                  value={formData.location.lng}
+                  onChange={(e) => handleNestedInputChange('location', 'lng', parseFloat(e.target.value) || 0)}
                   step="any"
                   placeholder="-90.7344"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
             </div>
@@ -380,7 +441,7 @@ export default function NewAldeaPage() {
                   value={highlight}
                   onChange={(e) => handleArrayInputChange('highlights', index, e.target.value)}
                   placeholder="ej: Talleres de tejido tradicional"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 />
                 {formData.highlights.length > 1 && (
                   <button
@@ -404,26 +465,26 @@ export default function NewAldeaPage() {
             </button>
           </div>
 
-          {/* Activities */}
+          {/* Main Activities */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Actividades</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Actividades Principales</h2>
             <p className="text-sm text-gray-600 mb-4">
-              Actividades que los turistas pueden realizar en esta aldea
+              Actividades principales que los turistas pueden realizar en esta aldea
             </p>
             
-            {formData.activities.map((activity, index) => (
+            {formData.mainActivities.map((activity, index) => (
               <div key={index} className="flex items-center space-x-3 mb-3">
                 <input
                   type="text"
                   value={activity}
-                  onChange={(e) => handleArrayInputChange('activities', index, e.target.value)}
-                  placeholder="ej: Caminata por senderos naturales"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  onChange={(e) => handleArrayInputChange('mainActivities', index, e.target.value)}
+                  placeholder="ej: Talleres de tejido tradicional"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 />
-                {formData.activities.length > 1 && (
+                {formData.mainActivities.length > 1 && (
                   <button
                     type="button"
-                    onClick={() => removeArrayItem('activities', index)}
+                    onClick={() => removeArrayItem('mainActivities', index)}
                     className="text-red-600 hover:text-red-700"
                   >
                     <X className="w-4 h-4" />
@@ -434,92 +495,231 @@ export default function NewAldeaPage() {
             
             <button
               type="button"
-              onClick={() => addArrayItem('activities')}
+              onClick={() => addArrayItem('mainActivities')}
               className="flex items-center space-x-2 text-yellow-600 hover:text-yellow-700"
             >
               <Plus className="w-4 h-4" />
-              <span>Agregar actividad</span>
+              <span>Agregar actividad principal</span>
             </button>
           </div>
 
-          {/* Additional Information */}
+          {/* Infrastructure */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Información Adicional</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Infraestructura</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Servicios e infraestructura disponible en la aldea
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="hasSchool"
+                    checked={formData.infrastructure.hasSchool}
+                    onChange={(e) => handleNestedInputChange('infrastructure', 'hasSchool', e.target.checked)}
+                    className="w-4 h-4 text-yellow-600 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500"
+                  />
+                  <label htmlFor="hasSchool" className="ml-2 text-sm text-gray-700">
+                    Escuela
+                  </label>
+                </div>
+                
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="hasHealthCenter"
+                    checked={formData.infrastructure.hasHealthCenter}
+                    onChange={(e) => handleNestedInputChange('infrastructure', 'hasHealthCenter', e.target.checked)}
+                    className="w-4 h-4 text-yellow-600 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500"
+                  />
+                  <label htmlFor="hasHealthCenter" className="ml-2 text-sm text-gray-700">
+                    Centro de Salud
+                  </label>
+                </div>
+                
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="hasElectricity"
+                    checked={formData.infrastructure.hasElectricity}
+                    onChange={(e) => handleNestedInputChange('infrastructure', 'hasElectricity', e.target.checked)}
+                    className="w-4 h-4 text-yellow-600 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500"
+                  />
+                  <label htmlFor="hasElectricity" className="ml-2 text-sm text-gray-700">
+                    Electricidad
+                  </label>
+                </div>
+                
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="hasWater"
+                    checked={formData.infrastructure.hasWater}
+                    onChange={(e) => handleNestedInputChange('infrastructure', 'hasWater', e.target.checked)}
+                    className="w-4 h-4 text-yellow-600 bg-gray-100 border-gray-300 rounded focus:ring-yellow-500"
+                  />
+                  <label htmlFor="hasWater" className="ml-2 text-sm text-gray-700">
+                    Agua Potable
+                  </label>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Acceso por Carretera
+                </label>
+                <select
+                  value={formData.infrastructure.roadAccess}
+                  onChange={(e) => handleNestedInputChange('infrastructure', 'roadAccess', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
+                >
+                  <option value="paved">Pavimentada</option>
+                  <option value="unpaved">No pavimentada</option>
+                  <option value="trail">Sendero</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Cultural Significance */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Significado Cultural</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Importancia histórica y cultural de la aldea
+            </p>
+            
+            <textarea
+              value={formData.culturalSignificance}
+              onChange={(e) => handleInputChange('culturalSignificance', e.target.value)}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
+              placeholder="Describa la importancia histórica, cultural y patrimonial de esta aldea..."
+            />
+          </div>
+
+          {/* Economic Activities */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Actividades Económicas</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Principales fuentes de ingresos y actividades económicas de la comunidad
+            </p>
+            
+            {formData.economicActivities.map((activity, index) => (
+              <div key={index} className="flex items-center space-x-3 mb-3">
+                <input
+                  type="text"
+                  value={activity}
+                  onChange={(e) => handleArrayInputChange('economicActivities', index, e.target.value)}
+                  placeholder="ej: Agricultura de café, Turismo comunitario"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
+                />
+                {formData.economicActivities.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeArrayItem('economicActivities', index)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            ))}
+            
+            <button
+              type="button"
+              onClick={() => addArrayItem('economicActivities')}
+              className="flex items-center space-x-2 text-yellow-600 hover:text-yellow-700"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Agregar actividad económica</span>
+            </button>
+          </div>
+
+          {/* Languages and Demographics */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">Demografia e Idiomas</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Mejor época para visitar
+                  Población
                 </label>
                 <input
-                  type="text"
-                  value={formData.bestTimeToVisit}
-                  onChange={(e) => handleInputChange('bestTimeToVisit', e.target.value)}
-                  placeholder="ej: Todo el año, Noviembre - Abril"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  type="number"
+                  value={formData.population}
+                  onChange={(e) => handleInputChange('population', parseInt(e.target.value) || 0)}
+                  placeholder="3500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nivel de accesibilidad
+                  Año de Fundación
                 </label>
-                <select
-                  value={formData.accessibility}
-                  onChange={(e) => handleInputChange('accessibility', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                >
-                  <option value="">Seleccionar nivel</option>
-                  <option value="easy">Fácil acceso</option>
-                  <option value="moderate">Acceso moderado</option>
-                  <option value="difficult">Acceso difícil</option>
-                </select>
+                <input
+                  type="number"
+                  value={formData.foundedYear}
+                  onChange={(e) => handleInputChange('foundedYear', parseInt(e.target.value) || 0)}
+                  placeholder="1524"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
+                />
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Teléfono de contacto
-                </label>
-                <input
-                  type="tel"
-                  value={formData.contactInfo.phone}
-                  onChange={(e) => handleNestedInputChange('contactInfo', 'phone', e.target.value)}
-                  placeholder="+502 1234-5678"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                />
-              </div>
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Idiomas
+              </label>
+              <p className="text-sm text-gray-600 mb-4">
+                Idiomas hablados en la comunidad
+              </p>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={formData.contactInfo.email}
-                  onChange={(e) => handleNestedInputChange('contactInfo', 'email', e.target.value)}
-                  placeholder="info@aldea.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                />
-              </div>
+              {formData.languages.map((language, index) => (
+                <div key={index} className="flex items-center space-x-3 mb-3">
+                  <input
+                    type="text"
+                    value={language}
+                    onChange={(e) => handleArrayInputChange('languages', index, e.target.value)}
+                    placeholder="ej: Español, Kaqchikel"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-gray-900 bg-white"
+                  />
+                  {formData.languages.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeArrayItem('languages', index)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sitio web
-                </label>
-                <input
-                  type="url"
-                  value={formData.contactInfo.website}
-                  onChange={(e) => handleNestedInputChange('contactInfo', 'website', e.target.value)}
-                  placeholder="https://aldea.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                />
-              </div>
+              <button
+                type="button"
+                onClick={() => addArrayItem('languages')}
+                className="flex items-center space-x-2 text-yellow-600 hover:text-yellow-700"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Agregar idioma</span>
+              </button>
             </div>
           </div>
         </form>
       </div>
+
+      {/* Image Upload Modal */}
+      {showUploadModal && (
+        <IrysUpload
+          onUpload={handleImageUpload}
+          onClose={() => {
+            setShowUploadModal(false)
+            setUploadTargetIndex(null)
+          }}
+        />
+      )}
     </div>
   )
 }
